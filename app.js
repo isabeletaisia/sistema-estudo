@@ -1,822 +1,905 @@
-const { useState, useEffect } = React;
+const { useState } = React;
 
-const studyData = {
-  matematica: {
-    name: 'Matemática',
-    icon: '🔢',
-    color: 'blue',
+// 7 MATÉRIAS: Matemática, Português, História, Geografia, Ciências, Inglês, Artes
+const subjects = [
+  {
+    id: "matematica",
+    name: "Matemática",
     summary: `
-      <h3 class="text-xl font-bold mb-3">Números Naturais e Operações</h3>
-      <p class="mb-2"><strong>Números Naturais (ℕ):</strong> 0, 1, 2, 3, 4, 5... usados para contar e ordenar.</p>
-      
-      <h4 class="font-bold mb-2">Divisão</h4>
-      <p class="mb-4"><strong>Dividendo = Divisor × Quociente + Resto</strong></p>
+A Matemática da apostila trabalha principalmente:
 
-      <h4 class="font-bold mb-2">Regras de Divisibilidade</h4>
-      <ul class="list-disc ml-6 mb-4">
-        <li><strong>Por 2:</strong> número par (termina em 0, 2, 4, 6 ou 8).</li>
-        <li><strong>Por 3:</strong> soma dos algarismos é múltiplo de 3.</li>
-        <li><strong>Por 5:</strong> termina em 0 ou 5.</li>
-        <li><strong>Por 10:</strong> termina em 0.</li>
-      </ul>
+• Números naturais (N = {0, 1, 2, 3, ...})
+• Operações fundamentais: adição, subtração, multiplicação e divisão
+• Critérios de divisibilidade (por 2, 3, 5, 9, 10 etc.)
+• Números primos e compostos
+• Fatoração, MDC (máximo divisor comum) e MMC (mínimo múltiplo comum)
+• Sistemas de numeração decimal e romano
 
-      <h4 class="font-bold mb-2">Números Primos</h4>
-      <p class="mb-4">Maior que 1 e com apenas dois divisores: 1 e ele mesmo. Exemplos: 2, 3, 5, 7, 11, 13, 17, 19...</p>
-
-      <h4 class="font-bold mb-2">Fatoração, MDC e MMC</h4>
-      <p class="mb-2"><strong>Fatoração:</strong> escrever um número como produto de fatores primos.</p>
-      <p class="mb-2"><strong>MDC:</strong> maior divisor comum.</p>
-      <p class="mb-2"><strong>MMC:</strong> menor múltiplo comum.</p>
-    `,
+O objetivo é desenvolver o raciocínio lógico, a noção de quantidade, cálculo mental e a compreensão dos diferentes sistemas de escrever números.
+    `.trim(),
     flashcards: [
-      { front: 'O que são números naturais?', back: 'São os números inteiros não negativos: 0, 1, 2, 3, 4, 5... usados para contagem e ordenação.' },
-      { front: 'Qual a relação fundamental da divisão?', back: 'Dividendo = Divisor × Quociente + Resto.' },
-      { front: 'Regra de divisibilidade por 2', back: 'O número precisa ser par (terminar em 0, 2, 4, 6 ou 8).' },
-      { front: 'Regra de divisibilidade por 3', back: 'A soma dos algarismos deve ser divisível por 3.' },
-      { front: 'Regra de divisibilidade por 5', back: 'O número deve terminar em 0 ou 5.' },
-      { front: 'Regra de divisibilidade por 10', back: 'O número deve terminar em 0.' },
-      { front: 'O que é um número primo?', back: 'Número maior que 1 que possui apenas dois divisores: 1 e ele mesmo.' },
-      { front: 'Exemplos de números primos até 20', back: '2, 3, 5, 7, 11, 13, 17, 19.' },
-      { front: 'O que é fatoração?', back: 'Decompor um número em produto de números primos, como 60 = 2² × 3 × 5.' },
-      { front: 'O que é MDC?', back: 'Máximo Divisor Comum, o maior número que divide dois ou mais números.' },
-      { front: 'O que é MMC?', back: 'Mínimo Múltiplo Comum, o menor múltiplo comum a dois ou mais números.' },
-      { front: '2 é primo?', back: 'Sim. É o único número primo par.' }
+      {
+        front: "O que são números naturais?",
+        back: "São os números usados para contar: N = {0, 1, 2, 3, 4, ...}",
+      },
+      {
+        front: "Critério de divisibilidade por 2",
+        back: "Um número é divisível por 2 quando termina em 0, 2, 4, 6 ou 8.",
+      },
+      {
+        front: "Critério de divisibilidade por 3",
+        back: "É divisível por 3 quando a soma dos algarismos é múltiplo de 3.",
+      },
+      {
+        front: "O que é um número primo?",
+        back: "Número maior que 1 que só tem dois divisores: 1 e ele mesmo.",
+      },
+      {
+        front: "Para que serve o MMC?",
+        back: "Para sincronizar repetições, como encontrar um período comum entre dois ciclos.",
+      },
+      {
+        front: "Para que serve o MDC?",
+        back: "Para dividir algo em partes iguais, sem sobras, usando o maior divisor possível.",
+      },
     ],
-    quiz: [
-      { question: '17 ÷ 5 tem quociente e resto iguais a:', options: ['3 e 2', '2 e 3', '4 e 1', '5 e 2'], correct: 0 },
-      { question: 'Qual número é divisível por 3?', options: ['124', '222', '145', '101'], correct: 1 },
-      { question: 'Qual é um número primo?', options: ['15', '21', '17', '27'], correct: 2 },
-      { question: 'Qual é o MDC de 12 e 18?', options: ['2', '3', '4', '6'], correct: 3 },
-      { question: 'Qual é o MMC de 4 e 6?', options: ['8', '10', '12', '14'], correct: 2 },
-      { question: 'Qual número é divisível por 2 e por 5?', options: ['15', '25', '30', '45'], correct: 2 },
-      { question: 'A soma dos algarismos de 243 é:', options: ['6', '7', '8', '9'], correct: 3 },
-      { question: 'A fatoração de 12 em primos é:', options: ['2 × 6', '2² × 3', '3 × 4', '2 × 2 × 2'], correct: 1 },
-      { question: 'Qual é o menor número primo?', options: ['0', '1', '2', '3'], correct: 2 },
-      { question: 'Um número é par quando:', options: ['Termina em 1, 3, 5, 7 ou 9', 'É múltiplo de 3', 'Termina em 0, 2, 4, 6 ou 8', 'É primo'], correct: 2 }
-    ]
+    questions: [
+      {
+        question: "Qual dos números abaixo é um número natural?",
+        options: ["-3", "0,5", "0", "-1/2"],
+        correctIndex: 2,
+        explanation: "Os números naturais são 0, 1, 2, 3... O único natural da lista é 0.",
+      },
+      {
+        question: "Um número termina em 8. Ele é, com certeza:",
+        options: [
+          "Divisível por 3",
+          "Divisível por 5",
+          "Divisível por 2",
+          "Número primo",
+        ],
+        correctIndex: 2,
+        explanation: "Se termina em 8, é par, portanto divisível por 2.",
+      },
+      {
+        question: "Qual é o menor número primo?",
+        options: ["0", "1", "2", "3"],
+        correctIndex: 2,
+        explanation: "2 é o menor número primo, pois tem apenas dois divisores: 1 e 2.",
+      },
+      {
+        question: "O número 45 é divisível por 3?",
+        options: ["Sim, porque 4+5=9", "Não, porque é ímpar", "Não, só por 5", "Não, é primo"],
+        correctIndex: 0,
+        explanation: "4 + 5 = 9 e 9 é múltiplo de 3, logo 45 é divisível por 3.",
+      },
+      {
+        question: "Para dividir igualmente 24 e 36 em partes inteiras e iguais, usamos:",
+        options: ["MMC", "MDC", "Soma simples", "Subtração repetida"],
+        correctIndex: 1,
+        explanation: "Para dividir em partes iguais, usamos o MDC (máximo divisor comum).",
+      },
+    ],
   },
-
-  portugues: {
-    name: 'Português',
-    icon: '📚',
-    color: 'green',
+  {
+    id: "portugues",
+    name: "Português",
     summary: `
-      <h3 class="text-xl font-bold mb-3">Língua Portuguesa – Classes de Palavras</h3>
-      
-      <h4 class="font-bold mb-2">Classes de Palavras</h4>
-      <ul class="list-disc ml-6 mb-4">
-        <li><strong>Substantivo:</strong> nomeia seres em geral (livro, cadeira, Gabriela, Florianópolis).</li>
-        <li><strong>Artigo:</strong> determina o substantivo de modo vago ou preciso (o, a, um, uma).</li>
-        <li><strong>Adjetivo:</strong> caracteriza o substantivo (camisa esverdeada, homem desleal).</li>
-        <li><strong>Numeral:</strong> indica quantidade ou posição (um, dois, primeiro, segundo).</li>
-        <li><strong>Pronome:</strong> representa ou acompanha substantivos (ele, esta, mim).</li>
-        <li><strong>Verbo:</strong> exprime processo situado no tempo (comeram, está, nevou).</li>
-        <li><strong>Advérbio:</strong> modifica o verbo indicando circunstância (cedo, bastante).</li>
-        <li><strong>Preposição:</strong> liga dois termos da oração (de, com, para).</li>
-        <li><strong>Conjunção:</strong> liga orações ou termos (e, mas, ou, porque).</li>
-        <li><strong>Interjeição:</strong> exprime sentimento e emoções (Ai! Puxa!).</li>
-      </ul>
+Em Língua Portuguesa, o foco do Fundamental costuma ser:
 
-      <h4 class="font-bold mb-2">Termos Essenciais da Oração</h4>
-      <p class="mb-2"><strong>Sujeito:</strong> termo que estabelece concordância com o verbo.</p>
-      <p class="mb-2"><strong>Predicado:</strong> aquilo que se declara a respeito do sujeito.</p>
-      <p class="mb-4">Exemplo: "Os homens (sujeito) pedem amor às mulheres (predicado)".</p>
+• Leitura e interpretação de textos
+• Classes de palavras (substantivo, adjetivo, verbo, artigo etc.)
+• Ortografia e acentuação
+• Pontuação básica
+• Concordância nominal e verbal
 
-      <h4 class="font-bold mb-2">Tipos de Predicado</h4>
-      <ul class="list-disc ml-6 mb-4">
-        <li><strong>Predicado Verbal:</strong> núcleo é um verbo significativo.</li>
-        <li><strong>Predicado Nominal:</strong> núcleo é um nome (predicativo do sujeito).</li>
-        <li><strong>Predicado Verbo-Nominal:</strong> apresenta dois núcleos (verbo e nome).</li>
-      </ul>
-    `,
+O objetivo é desenvolver compreensão leitora, produção de textos e uso correto da norma padrão em situações formais de comunicação.
+    `.trim(),
     flashcards: [
-      { front: 'O que é substantivo?', back: 'Palavra que nomeia seres em geral: pessoas, lugares, objetos, sentimentos.' },
-      { front: 'Função do artigo', back: 'Determinar o substantivo de modo vago (um, uma) ou preciso (o, a).' },
-      { front: 'O que é adjetivo?', back: 'Palavra que caracteriza o substantivo, indicando qualidade ou característica.' },
-      { front: 'Função do pronome', back: 'Representar ou acompanhar substantivos (ele, esta, mim, ninguém).' },
-      { front: 'O que é verbo?', back: 'Palavra que exprime processo situado no tempo: ação, estado ou fenômeno.' },
-      { front: 'Função do advérbio', back: 'Modificar o verbo, indicando circunstância (tempo, modo, lugar, intensidade).' },
-      { front: 'O que é preposição?', back: 'Palavra que liga dois termos da oração, subordinando um ao outro.' },
-      { front: 'Função da conjunção', back: 'Ligar duas orações ou dois termos da oração.' },
-      { front: 'O que é sujeito?', back: 'Termo que estabelece concordância com o verbo na oração.' },
-      { front: 'O que é predicado?', back: 'Aquilo que se declara a respeito do sujeito.' },
-      { front: 'Predicado verbal', back: 'Aquele que tem como núcleo significativo um verbo.' },
-      { front: 'Predicado nominal', back: 'Aquele que tem como núcleo significativo um nome (predicativo do sujeito).' }
+      {
+        front: "O que é substantivo?",
+        back: "É a palavra que nomeia seres, lugares, objetos, sentimentos (ex.: casa, amor).",
+      },
+      {
+        front: "Função do artigo",
+        back: "Acompanhar o substantivo, indicando gênero e número (ex.: o, a, os, as).",
+      },
+      {
+        front: "Verbo",
+        back: "Palavra que indica ação, estado ou fenômeno da natureza (ex.: correr, ser, chover).",
+      },
+      {
+        front: "Frase com sujeito e predicado",
+        back: "Toda oração tem um sujeito (de quem se fala) e um predicado (o que se diz dele).",
+      },
+      {
+        front: "Acentuação",
+        back: "Serve para marcar a sílaba tônica e diferenças de sentido (ex.: avó x avo).",
+      },
+      {
+        front: "Pontuação básica",
+        back: "Vírgula organiza listas e ideias; ponto final indica término de uma frase.",
+      },
     ],
-    quiz: [
-      { question: 'Qual opção contém apenas substantivos?', options: ['casa, bonito, correr', 'Brasil, amizade, livro', 'feliz, aqui, ontem', 'eu, tu, ele'], correct: 1 },
-      { question: 'Qual classe de palavra indica ação ou estado?', options: ['Substantivo', 'Adjetivo', 'Verbo', 'Advérbio'], correct: 2 },
-      { question: 'Qual é um exemplo de adjetivo?', options: ['mesa', 'Brasil', 'alegre', 'correr'], correct: 2 },
-      { question: 'Qual é a função do pronome?', options: ['Nomear seres', 'Representar ou acompanhar substantivos', 'Indicar ação', 'Ligar termos'], correct: 1 },
-      { question: 'Qual palavra é um advérbio?', options: ['casa', 'bonito', 'rapidamente', 'correr'], correct: 2 },
-      { question: 'Qual é uma preposição?', options: ['casa', 'de', 'bonito', 'correr'], correct: 1 },
-      { question: 'Qual é uma conjunção?', options: ['casa', 'bonito', 'e', 'correr'], correct: 2 },
-      { question: 'Na frase "O aluno estuda", o sujeito é:', options: ['estuda', 'O', 'O aluno', 'aluno'], correct: 2 },
-      { question: 'Na frase "O dia amanheceu ensolarado", o predicado é:', options: ['Verbal', 'Nominal', 'Verbo-nominal', 'Inexistente'], correct: 2 },
-      { question: 'Qual frase tem predicado nominal?', options: ['O menino correu.', 'A menina é inteligente.', 'Eles comeram bolo.', 'Nós viajamos ontem.'], correct: 1 }
-    ]
+    questions: [
+      {
+        question: "Em “O menino correu.”, a palavra “menino” é:",
+        options: ["Verbo", "Adjetivo", "Substantivo", "Artigo"],
+        correctIndex: 2,
+        explanation: "“Menino” é um ser, portanto é substantivo.",
+      },
+      {
+        question: "Em “As meninas estudam.”, “As” é:",
+        options: ["Preposição", "Artigo definido", "Pronome", "Substantivo"],
+        correctIndex: 1,
+        explanation: "“As” é artigo definido feminino plural.",
+      },
+      {
+        question: "Qual opção apresenta um verbo?",
+        options: ["Feliz", "Casa", "Comer", "Bonito"],
+        correctIndex: 2,
+        explanation: "“Comer” é ação, logo é um verbo.",
+      },
+      {
+        question: "A função principal do ponto final é:",
+        options: [
+          "Marcar surpresa",
+          "Indicar pergunta",
+          "Separar itens de uma lista",
+          "Indicar término de uma frase",
+        ],
+        correctIndex: 3,
+        explanation: "O ponto final fecha uma frase declarativa.",
+      },
+      {
+        question: "Em “Os livros novos chegaram.”, o sujeito é:",
+        options: [
+          "Chegaram",
+          "Novos",
+          "Os livros novos",
+          "Livros",
+        ],
+        correctIndex: 2,
+        explanation: "O sujeito completo é “Os livros novos”.",
+      },
+    ],
   },
-
-  historia: {
-    name: 'História',
-    icon: '🏛️',
-    color: 'yellow',
+  {
+    id: "historia",
+    name: "História",
     summary: `
-      <h3 class="text-xl font-bold mb-3">Expansão Marítima e Colonização</h3>
-      <p class="mb-4">
-        A partir dos séculos XV e XVI, reinos europeus como Portugal e Espanha 
-        iniciaram grandes viagens marítimas em busca de novas rotas comerciais,
-        metais preciosos e expansão da fé cristã.
-      </p>
+Na apostila de História aparecem temas como:
 
-      <h4 class="font-bold mb-2">Causas das Grandes Navegações</h4>
-      <ul class="list-disc ml-6 mb-4">
-        <li>Busca de um caminho marítimo para as Índias.</li>
-        <li>Enriquecimento da burguesia comercial.</li>
-        <li>Escassez de metais preciosos na Europa.</li>
-        <li>Progresso técnico (bússola, astrolábio, caravelas).</li>
-      </ul>
+• Expansão Marítima europeia
+• Colonização portuguesa, espanhola, francesa, inglesa e holandesa
+• Sistema colonial brasileiro
+• Ciclos econômicos: açúcar, tabaco, gado etc.
+• Bandeirismo e revoltas coloniais
+• Segundo Reinado, Abolição da Escravidão
+• Proclamação da República e governos militares
 
-      <h4 class="font-bold mb-2">Colonização da América</h4>
-      <p class="mb-4">
-        Os europeus invadiram territórios americanos, dominaram povos nativos,
-        escravizaram populações indígenas e africanas e implantaram o 
-        <strong>Sistema Colonial</strong>.
-      </p>
-
-      <h4 class="font-bold mb-2">Ciclos Econômicos no Brasil Colônia</h4>
-      <ul class="list-disc ml-6 mb-4">
-        <li><strong>Açúcar:</strong> produção em engenhos, trabalho escravo africano, latifúndio.</li>
-        <li><strong>Fumo:</strong> usado como moeda para compra de escravos.</li>
-        <li><strong>Gado:</strong> interiorização da colonização, abastecimento interno.</li>
-        <li><strong>Ouro:</strong> mineração em Minas Gerais, Goiás e Mato Grosso.</li>
-      </ul>
-
-      <h4 class="font-bold mb-2">Segundo Reinado e Abolição</h4>
-      <p class="mb-2">
-        O Segundo Reinado (1840–1889), com D. Pedro II, teve estabilidade política, 
-        crescimento do café e modernização.
-      </p>
-      <p class="mb-4">
-        A escravidão foi abolida em 1888, com a Lei Áurea, após leis graduais como 
-        a do Ventre Livre (1871) e a dos Sexagenários (1885).
-      </p>
-
-      <h4 class="font-bold mb-2">República e Ditadura Militar</h4>
-      <p class="mb-2">Em 1889, foi proclamada a República por Deodoro da Fonseca.</p>
-      <p class="mb-4">
-        De 1964 a 1985, o Brasil viveu uma <strong>Ditadura Militar</strong>, 
-        marcada por censura, repressão política, prisões e desaparecimentos.
-      </p>
-    `,
+O foco é compreender como esses processos históricos moldaram o Brasil e o mundo atual.
+    `.trim(),
     flashcards: [
-      { front: 'Principais causas das Grandes Navegações', back: 'Busca de rotas para as Índias, metais preciosos, comércio, fé cristã e fortalecimento dos reis.' },
-      { front: 'Países pioneiros na Expansão Marítima', back: 'Portugal e Espanha.' },
-      { front: 'O que é Sistema Colonial?', back: 'Conjunto de relações em que a colônia existe para enriquecer a metrópole.' },
-      { front: 'Principal produto do ciclo do açúcar', back: 'Açúcar, produzido em engenhos com trabalho escravo.' },
-      { front: 'O que foi o ciclo do ouro?', back: 'Período de intensa mineração, principalmente em Minas Gerais, no século XVIII.' },
-      { front: 'Quem governou o Segundo Reinado?', back: 'D. Pedro II, entre 1840 e 1889.' },
-      { front: 'O que foi a Lei Áurea?', back: 'Lei de 1888 que aboliu oficialmente a escravidão no Brasil.' },
-      { front: 'Quem proclamou a República?', back: 'Marechal Deodoro da Fonseca, em 1889.' },
-      { front: 'Período da Ditadura Militar no Brasil', back: 'De 1964 a 1985, com forte repressão e censura.' },
-      { front: 'O que eram as capitanias hereditárias?', back: 'Grandes faixas de terra doadas a donatários para administrar e colonizar.' },
-      { front: 'O que é plantation?', back: 'Sistema baseado em latifúndio, monocultura e trabalho escravo voltado à exportação.' },
-      { front: 'Quem foram os bandeirantes?', back: 'Expedicionários que exploravam o interior em busca de índios e metais preciosos.' }
+      {
+        front: "O que foi a Expansão Marítima?",
+        back: "Período em que reinos europeus buscaram novas rotas comerciais por mar.",
+      },
+      {
+        front: "Principal produto do ciclo do açúcar",
+        back: "A cana-de-açúcar, cultivada em grandes engenhos, com uso de mão de obra escravizada.",
+      },
+      {
+        front: "Bandeirantes",
+        back: "Exploradores que adentravam o interior em busca de riquezas e escravização de indígenas.",
+      },
+      {
+        front: "Abolição da escravidão no Brasil",
+        back: "Ocorreu em 1888, com a Lei Áurea, assinada pela princesa Isabel.",
+      },
+      {
+        front: "Proclamação da República",
+        back: "Aconteceu em 1889, com a queda da monarquia e início do regime republicano.",
+      },
+      {
+        front: "Sistema colonial",
+        back: "Conjunto de regras e práticas que mantinham a colônia dependente da metrópole.",
+      },
     ],
-    quiz: [
-      { question: 'Um dos principais objetivos das Grandes Navegações era:', options: ['Encontrar novos esportes', 'Encontrar rotas para as Índias', 'Fugir da Europa', 'Descobrir a Antártida'], correct: 1 },
-      { question: 'O Brasil foi colonizado por qual país?', options: ['Espanha', 'França', 'Inglaterra', 'Portugal'], correct: 3 },
-      { question: 'O ciclo do açúcar usava principalmente:', options: ['Trabalho assalariado', 'Trabalho escravo africano', 'Trabalho voluntário', 'Robôs'], correct: 1 },
-      { question: 'O ciclo do ouro aconteceu principalmente em:', options: ['Bahia', 'Pernambuco', 'Minas Gerais', 'Rio Grande do Sul'], correct: 2 },
-      { question: 'A Lei Áurea foi assinada em:', options: ['1808', '1822', '1888', '1964'], correct: 2 },
-      { question: 'Quem governou o Brasil no Segundo Reinado?', options: ['D. Pedro I', 'D. Pedro II', 'Getúlio Vargas', 'Juscelino Kubitschek'], correct: 1 },
-      { question: 'A Proclamação da República ocorreu em:', options: ['1500', '1822', '1889', '1964'], correct: 2 },
-      { question: 'A Ditadura Militar brasileira durou cerca de:', options: ['5 anos', '10 anos', '21 anos', '40 anos'], correct: 2 },
-      { question: 'Capitanias hereditárias eram:', options: ['Pequenas cidades', 'Faixas de terra doadas a donatários', 'Navios de guerra', 'Tipos de impostos'], correct: 1 },
-      { question: 'Plantation significa:', options: ['Minifúndio, policultura e trabalho livre', 'Latifúndio, monocultura, trabalho escravo e exportação', 'Apenas mineração', 'Apenas pecuária'], correct: 1 }
-    ]
+    questions: [
+      {
+        question: "Um dos objetivos da Expansão Marítima europeia foi:",
+        options: [
+          "Conhecer novas culturas apenas",
+          "Buscar novas rotas comerciais para as Índias",
+          "Acabar com o comércio",
+          "Fundar a ONU",
+        ],
+        correctIndex: 1,
+        explanation: "Os europeus queriam novas rotas para o comércio de especiarias.",
+      },
+      {
+        question: "O ciclo do açúcar no Brasil colonial usou principalmente:",
+        options: [
+          "Mão de obra assalariada",
+          "Mão de obra escravizada",
+          "Robôs",
+          "Trabalho voluntário",
+        ],
+        correctIndex: 1,
+        explanation: "A economia açucareira baseava-se na escravidão, especialmente de africanos.",
+      },
+      {
+        question: "A Lei Áurea foi responsável por:",
+        options: [
+          "Iniciar a colonização",
+          "Proibir o tráfico de drogas",
+          "Abolir a escravidão no Brasil",
+          "Declarar guerra a Portugal",
+        ],
+        correctIndex: 2,
+        explanation: "A Lei Áurea, de 1888, aboliu oficialmente a escravidão no país.",
+      },
+      {
+        question: "A Proclamação da República ocorreu em:",
+        options: ["1822", "1888", "1889", "1500"],
+        correctIndex: 2,
+        explanation: "Em 1889 a monarquia foi derrubada e instaurou-se a República.",
+      },
+      {
+        question: "A relação entre metrópole e colônia no sistema colonial era:",
+        options: [
+          "De igualdade econômica",
+          "De dependência da metrópole pela colônia",
+          "De ajuda mútua",
+          "Sem trocas comerciais",
+        ],
+        correctIndex: 1,
+        explanation: "A metrópole explorava economicamente a colônia.",
+      },
+    ],
   },
-
-  geografia: {
-    name: 'Geografia',
-    icon: '🌍',
-    color: 'purple',
+  {
+    id: "geografia",
+    name: "Geografia",
     summary: `
-      <h3 class="text-xl font-bold mb-3">Geografia Física e Humana</h3>
+Na Geografia da apostila aparecem:
 
-      <h4 class="font-bold mb-2">Sistema Solar</h4>
-      <p class="mb-4">
-        O Sistema Solar é formado pelo Sol e 8 planetas: Mercúrio, Vênus, Terra, Marte, 
-        Júpiter, Saturno, Urano e Netuno.
-      </p>
+• Origem do Universo e formação do Sistema Solar
+• Movimentos da Terra (rotação e translação)
+• Fusos horários e zonas térmicas
+• Escalas cartográficas e leitura de mapas
+• Paisagens naturais e modificadas
+• Distribuição da população
 
-      <h4 class="font-bold mb-2">Movimentos da Terra</h4>
-      <ul class="list-disc ml-6 mb-4">
-        <li><strong>Rotação:</strong> movimento em torno do próprio eixo, duração aproximada de 24 horas. Causa os dias e as noites.</li>
-        <li><strong>Translação:</strong> movimento ao redor do Sol, duração aproximada de 365 dias. Responsável pelas estações do ano.</li>
-      </ul>
-
-      <h4 class="font-bold mb-2">Cartografia e Coordenadas</h4>
-      <p class="mb-2">
-        <strong>Latitude:</strong> distância em graus em relação à Linha do Equador (0°).<br>
-        <strong>Longitude:</strong> distância em graus em relação ao Meridiano de Greenwich (0°).
-      </p>
-      <p class="mb-4">
-        <strong>Escala:</strong> relação entre a distância medida no mapa e a distância real.
-      </p>
-
-      <h4 class="font-bold mb-2">Zonas Térmicas</h4>
-      <ul class="list-disc ml-6 mb-4">
-        <li><strong>Tropical:</strong> região próxima à Linha do Equador, clima mais quente.</li>
-        <li><strong>Temperada:</strong> climas moderados, entre trópicos e círculos polares.</li>
-        <li><strong>Polar:</strong> regiões geladas próximas aos polos.</li>
-      </ul>
-
-      <h4 class="font-bold mb-2">Fusos Horários</h4>
-      <p class="mb-4">
-        A Terra é dividida em 24 fusos horários de 15° cada. O Brasil possui 4 fusos horários oficiais.
-      </p>
-    `,
+O estudo ajuda a entender o espaço geográfico e a relação entre sociedade e natureza.
+    `.trim(),
     flashcards: [
-      { front: 'Quantos planetas tem o Sistema Solar?', back: '8 planetas: Mercúrio, Vênus, Terra, Marte, Júpiter, Saturno, Urano e Netuno.' },
-      { front: 'O que é rotação da Terra?', back: 'Movimento da Terra em torno do próprio eixo, dura cerca de 24 horas e causa dias e noites.' },
-      { front: 'O que é translação da Terra?', back: 'Movimento da Terra ao redor do Sol, dura cerca de 365 dias e causa as estações do ano.' },
-      { front: 'O que é latitude?', back: 'Distância em graus em relação à Linha do Equador (0°).' },
-      { front: 'O que é longitude?', back: 'Distância em graus em relação ao Meridiano de Greenwich (0°).' },
-      { front: 'O que é escala cartográfica?', back: 'Relação entre a distância no mapa e a distância real no terreno.' },
-      { front: 'Quais são as zonas térmicas da Terra?', back: 'Zonas Tropical, Temperada e Polar.' },
-      { front: 'Quantos fusos horários a Terra possui?', back: '24 fusos horários, cada um com 15° de longitude.' },
-      { front: 'Quantos fusos horários tem o Brasil?', back: '4 fusos horários oficiais.' },
-      { front: 'O que é demografia?', back: 'Estudo das populações humanas: tamanho, distribuição e evolução.' },
-      { front: 'O que é densidade demográfica?', back: 'Relação entre população total e área do território (hab/km²).' },
-      { front: 'O que é migração?', back: 'Deslocamento de pessoas de um lugar para outro.' }
+      {
+        front: "Rotação da Terra",
+        back: "Movimento em torno do próprio eixo, responsável pela alternância de dia e noite.",
+      },
+      {
+        front: "Translação da Terra",
+        back: "Movimento em torno do Sol, responsável pelas estações do ano.",
+      },
+      {
+        front: "Fuso horário",
+        back: "Cada faixa de 15° de longitude que corresponde, aproximadamente, a 1 hora.",
+      },
+      {
+        front: "Zona tropical",
+        back: "Região próxima à linha do Equador, com temperaturas mais altas na maior parte do ano.",
+      },
+      {
+        front: "Escala cartográfica",
+        back: "Relação entre o tamanho no mapa e o tamanho real na superfície terrestre.",
+      },
+      {
+        front: "Paisagem natural x modificada",
+        back: "Natural é pouco alterada pelo homem; modificada tem intensa ação humana.",
+      },
     ],
-    quiz: [
-      { question: 'Quantos planetas fazem parte do Sistema Solar?', options: ['7', '8', '9', '10'], correct: 1 },
-      { question: 'O movimento de rotação da Terra causa:', options: ['Estações do ano', 'Dia e noite', 'Fases da Lua', 'Marés'], correct: 1 },
-      { question: 'O movimento de translação da Terra causa principalmente:', options: ['Dia e noite', 'Estações do ano', 'Ventos', 'Marés'], correct: 1 },
-      { question: 'Latitude é medida em relação a:', options: ['Meridiano de Greenwich', 'Trópico de Câncer', 'Linha do Equador', 'Círculo Polar'], correct: 2 },
-      { question: 'Longitude é medida em relação a:', options: ['Linha do Equador', 'Meridiano de Greenwich', 'Trópico de Capricórnio', 'Círculo Polar'], correct: 1 },
-      { question: 'Cada fuso horário possui:', options: ['5°', '10°', '15°', '30°'], correct: 2 },
-      { question: 'Zona térmica mais quente do planeta:', options: ['Temperada', 'Polar', 'Tropical', 'Glacial'], correct: 2 },
-      { question: 'Demografia estuda:', options: ['Solos', 'Rios', 'Populações humanas', 'Montanhas'], correct: 2 },
-      { question: 'Densidade demográfica é:', options: ['População/área', 'Área/população', 'Área/rios', 'População/rios'], correct: 0 },
-      { question: 'Migração é:', options: ['Clima', 'Relevo', 'Movimento de pessoas', 'Rotação da Terra'], correct: 2 }
-    ]
+    questions: [
+      {
+        question: "O movimento de rotação da Terra é responsável principalmente por:",
+        options: [
+          "Estações do ano",
+          "Dia e noite",
+          "Marés",
+          "Formação de montanhas",
+        ],
+        correctIndex: 1,
+        explanation: "A rotação causa a alternância entre dia e noite.",
+      },
+      {
+        question: "O movimento de translação da Terra é:",
+        options: [
+          "Em torno do próprio eixo",
+          "Em torno da Lua",
+          "Em torno do Sol",
+          "Estacionário",
+        ],
+        correctIndex: 2,
+        explanation: "Translação é o movimento da Terra em torno do Sol.",
+      },
+      {
+        question: "A cada fuso horário, em média, corresponde uma diferença de:",
+        options: ["10 minutos", "30 minutos", "1 hora", "12 horas"],
+        correctIndex: 2,
+        explanation: "Cada 15° de longitude correspondem, aproximadamente, a 1 hora.",
+      },
+      {
+        question: "A zona tropical localiza-se:",
+        options: [
+          "Entre os círculos polares",
+          "Entre o Trópico de Câncer e o Trópico de Capricórnio",
+          "Apenas no hemisfério norte",
+          "Apenas no hemisfério sul",
+        ],
+        correctIndex: 1,
+        explanation: "A zona tropical fica entre os dois trópicos, envolvendo o Equador.",
+      },
+      {
+        question: "Uma paisagem altamente urbanizada é exemplo de:",
+        options: [
+          "Paisagem exclusivamente natural",
+          "Paisagem sem ação humana",
+          "Paisagem modificada pelo homem",
+          "Paisagem desabitada",
+        ],
+        correctIndex: 2,
+        explanation: "Cidades são paisagens fortemente modificadas pela ação humana.",
+      },
+    ],
   },
-
-  ciencias: {
-    name: 'Ciências',
-    icon: '🔬',
-    color: 'red',
+  {
+    id: "ciencias",
+    name: "Ciências",
     summary: `
-      <h3 class="text-xl font-bold mb-3">Ciências Naturais</h3>
+Em Ciências, a apostila aborda:
 
-      <h4 class="font-bold mb-2">Células e Organização do Corpo</h4>
-      <p class="mb-2">
-        A célula é a menor unidade estrutural e funcional dos seres vivos.
-      </p>
-      <ul class="list-disc ml-6 mb-4">
-        <li><strong>Procariontes:</strong> sem núcleo organizado (bactérias).</li>
-        <li><strong>Eucariontes:</strong> com núcleo definido (animais, plantas, fungos).</li>
-      </ul>
-      <p class="mb-4">Níveis de organização: Célula → Tecido → Órgão → Sistema → Organismo.</p>
+• Células e níveis de organização dos seres vivos
+• Ecossistemas, cadeias alimentares e relações ecológicas
+• Órgãos dos sentidos
+• Reinos animal e vegetal
+• Sistemas do corpo humano (digestório, respiratório, circulatório)
+• Noções de Física (força, movimento, calor, ondas) e Química (átomos, substâncias)
 
-      <h4 class="font-bold mb-2">Ecologia</h4>
-      <p class="mb-2">
-        Estuda as relações entre os seres vivos e o ambiente.
-      </p>
-      <ul class="list-disc ml-6 mb-4">
-        <li><strong>Cadeia alimentar:</strong> Produtor → Consumidor → Decompositor.</li>
-        <li><strong>Ecossistema:</strong> conjunto de seres vivos (fatores bióticos) e ambiente (fatores abióticos).</li>
-      </ul>
-
-      <h4 class="font-bold mb-2">Sistemas do Corpo Humano</h4>
-      <ul class="list-disc ml-6 mb-4">
-        <li><strong>Digestório:</strong> digestão e absorção de nutrientes.</li>
-        <li><strong>Respiratório:</strong> entrada de oxigênio e saída de gás carbônico.</li>
-        <li><strong>Circulatório:</strong> transporte de sangue, gases, nutrientes e resíduos.</li>
-        <li><strong>Nervoso:</strong> coordena e controla o funcionamento do corpo.</li>
-      </ul>
-
-      <h4 class="font-bold mb-2">Órgãos dos Sentidos</h4>
-      <p class="mb-2">Visão, audição, olfato, paladar e tato nos permitem perceber o ambiente.</p>
-    `,
+O objetivo é compreender o funcionamento do corpo, dos seres vivos e dos fenômenos físicos e químicos do dia a dia.
+    `.trim(),
     flashcards: [
-      { front: 'O que é célula?', back: 'Menor unidade estrutural e funcional dos seres vivos.' },
-      { front: 'Diferença entre célula procarionte e eucarionte', back: 'Procarionte não tem núcleo organizado; eucarionte tem núcleo definido.' },
-      { front: 'Níveis de organização do corpo', back: 'Célula → Tecido → Órgão → Sistema → Organismo.' },
-      { front: 'O que é ecologia?', back: 'Ramo da biologia que estuda as relações entre os seres vivos e o ambiente.' },
-      { front: 'Definição de cadeia alimentar', back: 'Sequência de seres vivos em que um serve de alimento ao outro.' },
-      { front: 'Função do sistema respiratório', back: 'Realizar as trocas gasosas (O₂ entra, CO₂ sai).' },
-      { front: 'Função do sistema circulatório', back: 'Transportar sangue, nutrientes e gases pelo organismo.' },
-      { front: 'Quais são os cinco sentidos?', back: 'Visão, audição, olfato, paladar e tato.' },
-      { front: 'O que é ecossistema?', back: 'Conjunto de seres vivos e ambiente que se relacionam.' },
-      { front: 'O que são fatores bióticos?', back: 'Seres vivos de um ecossistema.' },
-      { front: 'O que são fatores abióticos?', back: 'Elementos não vivos: solo, água, atmosfera.' },
-      { front: 'Reino Animal e Vegetal', back: 'Animais são heterótrofos; plantas são autótrofas (fotossíntese).' }
+      {
+        front: "Célula",
+        back: "Unidade básica estrutural e funcional de todos os seres vivos.",
+      },
+      {
+        front: "Ecossistema",
+        back: "Conjunto de seres vivos + ambiente físico e suas interações.",
+      },
+      {
+        front: "Produtores em uma cadeia alimentar",
+        back: "Seres que produzem seu próprio alimento, como as plantas (fotossíntese).",
+      },
+      {
+        front: "Sistema respiratório",
+        back: "Responsável pelas trocas gasosas, como entrada de oxigênio e saída de gás carbônico.",
+      },
+      {
+        front: "Átomo",
+        back: "Menor partícula de um elemento químico que mantém suas propriedades.",
+      },
+      {
+        front: "Força",
+        back: "Grandeza capaz de alterar o estado de movimento ou a forma de um corpo.",
+      },
     ],
-    quiz: [
-      { question: 'A menor unidade dos seres vivos é:', options: ['Tecido', 'Célula', 'Órgão', 'Sistema'], correct: 1 },
-      { question: 'Células com núcleo definido são chamadas de:', options: ['Procariontes', 'Eucariontes', 'Neurônios', 'Hemácias'], correct: 1 },
-      { question: 'Sequência correta de organização:', options: ['Órgão → Célula → Tecido', 'Célula → Órgão → Tecido', 'Célula → Tecido → Órgão', 'Sistema → Órgão → Tecido'], correct: 2 },
-      { question: 'Na cadeia alimentar, produtores são:', options: ['Animais carnívoros', 'Plantas e algas', 'Decompositores', 'Predadores'], correct: 1 },
-      { question: 'Sistema responsável pelas trocas gasosas:', options: ['Digestório', 'Respiratório', 'Circulatório', 'Nervoso'], correct: 1 },
-      { question: 'Quantos são os sentidos humanos?', options: ['3', '4', '5', '6'], correct: 2 },
-      { question: 'O que é ecossistema?', options: ['Apenas plantas', 'Apenas animais', 'Seres vivos e ambiente', 'Apenas água'], correct: 2 },
-      { question: 'Fatores bióticos são:', options: ['Água e solo', 'Seres vivos', 'Ar e luz', 'Rochas'], correct: 1 },
-      { question: 'Plantas realizam:', options: ['Respiração apenas', 'Fotossíntese', 'Digestão', 'Circulação'], correct: 1 },
-      { question: 'Animais são:', options: ['Autótrofos', 'Heterótrofos', 'Produtores', 'Decompositores'], correct: 1 }
-    ]
+    questions: [
+      {
+        question: "A menor unidade estrutural dos seres vivos é:",
+        options: ["O átomo", "A célula", "O tecido", "O órgão"],
+        correctIndex: 1,
+        explanation: "A célula é a unidade básica dos seres vivos.",
+      },
+      {
+        question: "Em uma cadeia alimentar, os produtores são:",
+        options: ["Animais carnívoros", "Animais herbívoros", "Plantas e algas", "Decompositores"],
+        correctIndex: 2,
+        explanation: "Plantas e algas produzem seu próprio alimento por fotossíntese.",
+      },
+      {
+        question: "Qual sistema é responsável pela circulação do sangue?",
+        options: ["Digestório", "Respiratório", "Nervoso", "Circulatório"],
+        correctIndex: 3,
+        explanation: "O sistema circulatório transporta sangue, nutrientes e gases pelo corpo.",
+      },
+      {
+        question: "Força é:",
+        options: [
+          "Apenas empurrar um objeto",
+          "Algo que só existe na imaginação",
+          "Capaz de alterar o movimento ou a forma de um corpo",
+          "Sempre invisível",
+        ],
+        correctIndex: 2,
+        explanation: "Força pode acelerar, parar, deformar ou mudar a direção de um corpo.",
+      },
+      {
+        question: "Os órgãos dos sentidos principais são:",
+        options: [
+          "Coração, fígado, rins",
+          "Olhos, ouvidos, nariz, língua e pele",
+          "Pulmões e brônquios",
+          "Estômago e intestino",
+        ],
+        correctIndex: 1,
+        explanation: "Olhos, ouvidos, nariz, língua e pele captam estímulos do ambiente.",
+      },
+    ],
   },
-
-  ingles: {
-    name: 'Inglês',
-    icon: '🇬🇧',
-    color: 'indigo',
+  {
+    id: "ingles",
+    name: "Inglês",
     summary: `
-      <h3 class="text-xl font-bold mb-3">English – Gramática Básica</h3>
+A parte de Inglês da apostila traz:
 
-      <h4 class="font-bold mb-2">Artigos (Articles)</h4>
-      <p class="mb-2">
-        <strong>Definite article:</strong> THE (o, a, os, as).<br>
-        <strong>Indefinite articles:</strong> A (antes de som de consoante), AN (antes de som de vogal).
-      </p>
+• Artigos (a, an, the)
+• Tempos verbais básicos: Simple Present, Simple Past, Simple Future
+• Frases condicionais simples (if...)
+• Numerais (cardinais e ordinais)
 
-      <h4 class="font-bold mb-2">Simple Present</h4>
-      <p class="mb-2">Usado para hábitos, rotinas e verdades gerais.</p>
-      <p class="mb-2"><strong>Afirmação:</strong> I work, You play, He works (3rd person + s).</p>
-      <p class="mb-2"><strong>Negativa:</strong> I don't work, He doesn't work.</p>
-      <p class="mb-4"><strong>Interrogativa:</strong> Do you work? Does he work?</p>
-
-      <h4 class="font-bold mb-2">Simple Past</h4>
-      <p class="mb-2">Ações concluídas no passado.</p>
-      <p class="mb-2"><strong>Regulares:</strong> add -ed (work → worked).</p>
-      <p class="mb-4"><strong>Irregulares:</strong> go → went, see → saw, have → had.</p>
-
-      <h4 class="font-bold mb-2">Simple Future</h4>
-      <p class="mb-2"><strong>Will:</strong> decisões no momento da fala. Ex.: I will study.</p>
-      <p class="mb-4"><strong>Going to:</strong> planos futuros. Ex.: I am going to study.</p>
-
-      <h4 class="font-bold mb-2">Conditional Sentences</h4>
-      <p class="mb-2"><strong>Type 1:</strong> If + present, will + verb. (Situação real)</p>
-      <p class="mb-2">Ex.: If you study, you will pass.</p>
-    `,
+O foco é desenvolver vocabulário, compreensão de estruturas simples e leitura de frases em contexto.
+    `.trim(),
     flashcards: [
-      { front: 'Uso de A e AN', back: 'A antes de som de consoante (a book), AN antes de som de vogal (an apple).' },
-      { front: 'Uso de THE', back: 'Artigo definido para algo específico (the book = o livro).' },
-      { front: 'Simple Present – 3ª pessoa', back: 'Adiciona -s ao verbo: He works, She plays, It rains.' },
-      { front: 'Negativa no Simple Present', back: 'I/you/we/they + don\'t + verb; he/she/it + doesn\'t + verb.' },
-      { front: 'Interrogativa no Simple Present', back: 'Do + I/you/we/they + verb? Does + he/she/it + verb?' },
-      { front: 'Formação do Simple Past regular', back: 'Verbo + -ed: work → worked, play → played.' },
-      { front: 'Verbos irregulares – exemplos', back: 'go → went, see → saw, have → had, do → did.' },
-      { front: 'Uso de WILL', back: 'Decisões no momento da fala: I will call you.' },
-      { front: 'Uso de GOING TO', back: 'Planos já decididos: I am going to travel.' },
-      { front: 'Conditional Type 1 – estrutura', back: 'If + present, will + verb.' },
-      { front: 'Conditional Type 2 – estrutura', back: 'If + past, would + verb.' },
-      { front: 'Numerais de 1 a 5 em inglês', back: 'one, two, three, four, five.' }
+      {
+        front: "Artigos indefinidos em inglês",
+        back: "a / an (ex.: a book, an apple).",
+      },
+      {
+        front: "Artigo definido em inglês",
+        back: "the (ex.: the book, the house).",
+      },
+      {
+        front: "Simple Present",
+        back: "Expressa hábitos e rotinas (ex.: She studies every day).",
+      },
+      {
+        front: "Simple Past",
+        back: "Expressa ações concluídas no passado (ex.: They played soccer yesterday).",
+      },
+      {
+        front: "Simple Future (will)",
+        back: "Expressa ações futuras (ex.: I will travel tomorrow).",
+      },
+      {
+        front: "Condicional simples (if)",
+        back: "Ex.: If it rains, I will stay home.",
+      },
     ],
-    quiz: [
-      { question: 'Complete: ___ apple a day keeps the doctor away.', options: ['A', 'An', 'The', 'Some'], correct: 1 },
-      { question: 'She ___ to school every day.', options: ['go', 'goes', 'going', 'went'], correct: 1 },
-      { question: 'I ___ a movie yesterday.', options: ['watch', 'watches', 'watched', 'watching'], correct: 2 },
-      { question: 'They ___ study tomorrow.', options: ['will', 'would', 'are', 'did'], correct: 0 },
-      { question: 'If you study, you ___ pass.', options: ['will', 'would', 'can\'t', 'did'], correct: 0 },
-      { question: 'The past of "go" is:', options: ['goed', 'went', 'gone', 'goes'], correct: 1 },
-      { question: 'Negative: He ___ like coffee.', options: ['don\'t', 'doesn\'t', 'didn\'t', 'isn\'t'], correct: 1 },
-      { question: 'Question: ___ you speak English?', options: ['Do', 'Does', 'Did', 'Are'], correct: 0 },
-      { question: 'Future plan: I am ___ to travel.', options: ['go', 'goes', 'going', 'went'], correct: 2 },
-      { question: 'Type 2: If I had money, I ___ travel.', options: ['will', 'would', 'going to', 'can'], correct: 1 }
-    ]
+    questions: [
+      {
+        question: "Qual frase está no Simple Present?",
+        options: [
+          "She studied yesterday.",
+          "She will study tomorrow.",
+          "She studies every day.",
+          "She is studying now.",
+        ],
+        correctIndex: 2,
+        explanation: "“Studies every day” indica hábito, típico do Simple Present.",
+      },
+      {
+        question: "Qual é o artigo indefinido correto: “__ apple”?",
+        options: ["a", "an", "the", "no"],
+        correctIndex: 1,
+        explanation: "Usa-se “an” antes de som de vogal (apple).",
+      },
+      {
+        question: "A frase “They played soccer yesterday.” está no:",
+        options: ["Simple Present", "Simple Past", "Simple Future", "Present Continuous"],
+        correctIndex: 1,
+        explanation: "“Played” + “yesterday” indicam ação concluída no passado.",
+      },
+      {
+        question: "Em “the dog”, “the” é:",
+        options: ["Artigo indefinido", "Artigo definido", "Pronome", "Preposição"],
+        correctIndex: 1,
+        explanation: "“The” é artigo definido em inglês.",
+      },
+      {
+        question: "Qual frase está no futuro (will)?",
+        options: [
+          "I go to school.",
+          "I went to school.",
+          "I will go to school.",
+          "I am going to school.",
+        ],
+        correctIndex: 2,
+        explanation: "“Will go” indica futuro simples.",
+      },
+    ],
   },
-
-  artes: {
-    name: 'Artes',
-    icon: '🎨',
-    color: 'pink',
+  {
+    id: "artes",
+    name: "Artes",
     summary: `
-      <h3 class="text-xl font-bold mb-3">História da Arte e Linguagens Artísticas</h3>
+Na apostila de Artes aparecem:
 
-      <h4 class="font-bold mb-2">História da Arte</h4>
-      <p class="mb-4">
-        A História da Arte estuda a evolução das expressões artísticas ao longo do tempo,
-        como pintura, escultura e arquitetura.
-      </p>
+• História da arte em diferentes períodos (Antiguidade, Idade Média, Idade Moderna)
+• Linguagens artísticas: pintura, escultura, música, dança, teatro
+• Folclore brasileiro e manifestações culturais
+• Importância da arte na expressão de sentimentos e na identidade de um povo
 
-      <h4 class="font-bold mb-2">Arte na Antiguidade</h4>
-      <ul class="list-disc ml-6 mb-4">
-        <li><strong>Egito:</strong> arte ligada à religião e ao culto aos faraós; uso da simetria, frontalidade e monumentos como pirâmides.</li>
-        <li><strong>Grécia:</strong> busca do ideal de beleza, proporção e equilíbrio. Templos (como o Partenon) e esculturas realistas.</li>
-        <li><strong>Roma:</strong> herda muito da arte grega; desenvolve arquitetura monumental (arcos, aquedutos, anfiteatros).</li>
-      </ul>
-
-      <h4 class="font-bold mb-2">Arte na Idade Média</h4>
-      <ul class="list-disc ml-6 mb-4">
-        <li><strong>Estilo Românico:</strong> construções robustas, paredes grossas, poucas janelas e arcos de volta perfeita.</li>
-        <li><strong>Estilo Gótico:</strong> construções altas, com vitrais, arcos ogivais e sensação de verticalidade.</li>
-      </ul>
-
-      <h4 class="font-bold mb-2">Arte na Idade Moderna</h4>
-      <ul class="list-disc ml-6 mb-4">
-        <li><strong>Barroco:</strong> arte dramática, com contrastes de luz e sombra, emoção e movimento.</li>
-        <li><strong>Realismo:</strong> representação da realidade social, com temas como pobreza, injustiça e crítica social.</li>
-        <li><strong>Impressionismo:</strong> surgido na França no século XIX, valoriza a luz, a cor e as impressões momentâneas da natureza.</li>
-      </ul>
-
-      <h4 class="font-bold mb-2">Folclore</h4>
-      <p class="mb-4">
-        Folclore é o conjunto de tradições, lendas, danças, festas, músicas, provérbios e costumes 
-        de um povo. No Brasil: festas juninas, boi-bumbá, frevo, maracatu, lendas como Saci,
-        Curupira, Iara.
-      </p>
-    `,
+O estudo de Artes amplia a sensibilidade estética e o conhecimento das produções culturais ao longo do tempo.
+    `.trim(),
     flashcards: [
-      { front: 'O que estuda a História da Arte?', back: 'A evolução das expressões artísticas (pintura, escultura, arquitetura etc.) ao longo do tempo.' },
-      { front: 'Característica marcante da arte egípcia', back: 'Ligada à religião e ao culto aos faraós, com uso de simetria e frontalidade.' },
-      { front: 'Objetivo da arte grega clássica', back: 'Buscar o ideal de beleza, proporção e equilíbrio do corpo humano.' },
-      { front: 'Contribuição da arte romana', back: 'Desenvolvimento da arquitetura monumental, como arcos, anfiteatros e aquedutos.' },
-      { front: 'O que caracteriza o estilo românico?', back: 'Construções pesadas, paredes grossas, poucas janelas e arcos de volta perfeita.' },
-      { front: 'O que caracteriza o estilo gótico?', back: 'Construções altas, vitrais coloridos, arcos ogivais e sensação de verticalidade.' },
-      { front: 'Principais características do Barroco', back: 'Dramatismo, contraste de luz e sombra, emoção e movimento.' },
-      { front: 'O que é Realismo na arte?', back: 'Movimento que retrata a realidade social de forma objetiva, muitas vezes com crítica.' },
-      { front: 'O que é Impressionismo?', back: 'Movimento que valoriza luz e cor, com pinceladas soltas e cenas ao ar livre.' },
-      { front: 'Exemplos de linguagens artísticas', back: 'Pintura, escultura, música, dança, teatro, literatura, cinema.' },
-      { front: 'Definição de folclore', back: 'Conjunto de tradições, lendas, danças, festas e costumes transmitidos entre gerações.' },
-      { front: 'Exemplos de folclore brasileiro', back: 'Festas juninas, boi-bumbá, frevo, maracatu, Saci, Curupira, Iara.' }
+      {
+        front: "O que é arte?",
+        back: "É uma forma de expressão humana que transmite ideias, sentimentos e visões de mundo.",
+      },
+      {
+        front: "Exemplos de linguagens artísticas",
+        back: "Pintura, escultura, música, dança, teatro, cinema.",
+      },
+      {
+        front: "Folclore brasileiro",
+        back: "Conjunto de lendas, festas, músicas e danças tradicionais (ex.: bumba meu boi).",
+      },
+      {
+        front: "Arte na Antiguidade",
+        back: "Inclui obras egípcias, gregas e romanas, ligadas à religião e ao poder.",
+      },
+      {
+        front: "Função social da arte",
+        back: "Expressar identidades, criticar a sociedade e registrar fatos históricos.",
+      },
+      {
+        front: "Arte popular",
+        back: "Produções ligadas ao cotidiano e às tradições de um povo.",
+      },
     ],
-    quiz: [
-      { question: 'A arte egípcia estava fortemente ligada a:', options: ['Esportes', 'Religião e culto aos faraós', 'Ficção científica', 'Humor'], correct: 1 },
-      { question: 'A arte grega clássica buscava principalmente:', options: ['Desordem e caos', 'Beleza ideal, proporção e equilíbrio', 'Somente temas religiosos', 'Apenas natureza'], correct: 1 },
-      { question: 'Uma característica do estilo românico é:', options: ['Paredes finas e grandes vitrais', 'Paredes grossas e poucas janelas', 'Arranha-céus de vidro', 'Uso de metal e concreto armado'], correct: 1 },
-      { question: 'O estilo gótico é marcado por:', options: ['Formas horizontais e simples', 'Torres altas, vitrais e arcos ogivais', 'Esculturas pré-históricas', 'Somente pinturas rupestres'], correct: 1 },
-      { question: 'O Barroco é conhecido pelo:', options: ['Equilíbrio simples e racional', 'Uso restrito de cores', 'Dramatismo e contraste de luz e sombra', 'Apenas cenas do cotidiano urbano'], correct: 2 },
-      { question: 'O Realismo dá destaque a:', options: ['Temas mitológicos fantasiosos', 'Abstrações sem forma', 'Realidade social e crítica', 'Apenas religião'], correct: 2 },
-      { question: 'O Impressionismo surgiu em qual país?', options: ['Itália', 'França', 'Brasil', 'Alemanha'], correct: 1 },
-      { question: 'Qual é uma característica do Impressionismo?', options: ['Linhas rígidas e geométricas', 'Pinceladas soltas e foco na luz', 'Esculturas em pedra apenas', 'Uso exclusivo de branco e preto'], correct: 1 },
-      { question: 'Folclore é:', options: ['Apenas lendas infantis', 'Conjunto de tradições, lendas, danças e costumes de um povo', 'Só músicas antigas', 'Arte moderna europeia'], correct: 1 },
-      { question: 'Exemplo de manifestação folclórica brasileira:', options: ['Ópera italiana', 'Ballet russo', 'Festas juninas', 'Rock inglês'], correct: 2 }
-    ]
+    questions: [
+      {
+        question: "Qual das opções NÃO é uma linguagem artística?",
+        options: ["Pintura", "Escultura", "Matemática", "Música"],
+        correctIndex: 2,
+        explanation: "Matemática é ciência; as outras são formas de arte.",
+      },
+      {
+        question: "O folclore brasileiro é formado por:",
+        options: [
+          "Apenas músicas estrangeiras",
+          "Lendas, festas e danças tradicionais",
+          "Somente filmes",
+          "Apenas literatura clássica",
+        ],
+        correctIndex: 1,
+        explanation: "Folclore inclui lendas, danças, músicas, festas e costumes populares.",
+      },
+      {
+        question: "Uma função importante da arte é:",
+        options: [
+          "Impedir a expressão de sentimentos",
+          "Expressar ideias e emoções",
+          "Substituir todas as ciências",
+          "Apenas decorar ambientes",
+        ],
+        correctIndex: 1,
+        explanation: "A arte expressa sentimentos, ideias e visões de mundo.",
+      },
+      {
+        question: "Na Antiguidade, muitas obras de arte estavam ligadas:",
+        options: [
+          "A videogames",
+          "À religião e ao poder",
+          "A carros e tecnologia",
+          "A esportes modernos",
+        ],
+        correctIndex: 1,
+        explanation: "Arte egípcia, grega e romana tinha forte relação com religião e poder.",
+      },
+      {
+        question: "Arte popular está associada:",
+        options: [
+          "Apenas a artistas famosos",
+          "A produções do cotidiano e tradições do povo",
+          "Somente à televisão",
+          "Exclusivamente à internet",
+        ],
+        correctIndex: 1,
+        explanation: "Arte popular nasce das tradições e do dia a dia da população.",
+      },
+    ],
+  },
+];
+
+// ---------------------- COMPONENTES DE UI ----------------------
+
+function SubjectButton({ subject, isSelected, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className={
+        "p-3 rounded-lg border text-left transition-colors " +
+        (isSelected
+          ? "bg-emerald-600 border-emerald-300 text-white"
+          : "bg-slate-800 border-slate-600 hover:bg-slate-700")
+      }
+    >
+      <div className="font-semibold">{subject.name}</div>
+      <div className="text-xs text-slate-300 mt-1">
+        Clique para estudar esta matéria
+      </div>
+    </button>
+  );
+}
+
+function ModeButton({ label, mode, currentMode, onClick }) {
+  const active = mode === currentMode;
+  return (
+    <button
+      onClick={onClick}
+      className={
+        "px-4 py-2 rounded-full text-sm font-semibold border transition-colors " +
+        (active
+          ? "bg-emerald-500 border-emerald-200 text-slate-900"
+          : "bg-slate-800 border-slate-600 text-slate-100 hover:bg-slate-700")
+      }
+    >
+      {label}
+    </button>
+  );
+}
+
+function SummaryView({ subject }) {
+  return (
+    <div className="bg-slate-800 border border-slate-700 rounded-xl p-4 md:p-6">
+      <h2 className="text-xl font-bold mb-3">
+        Resumo – {subject.name}
+      </h2>
+      <p className="whitespace-pre-line text-slate-100 text-sm md:text-base leading-relaxed">
+        {subject.summary}
+      </p>
+    </div>
+  );
+}
+
+function FlashcardsView({ subject }) {
+  const [index, setIndex] = useState(0);
+  const [showBack, setShowBack] = useState(false);
+  const card = subject.flashcards[index];
+
+  function nextCard() {
+    setShowBack(false);
+    setIndex((prev) => (prev + 1) % subject.flashcards.length);
   }
-};
 
-// ------------------- COMPONENTE PRINCIPAL -------------------
+  function prevCard() {
+    setShowBack(false);
+    setIndex((prev) =>
+      prev === 0 ? subject.flashcards.length - 1 : prev - 1
+    );
+  }
+
+  return (
+    <div className="bg-slate-800 border border-slate-700 rounded-xl p-4 md:p-6 flex flex-col gap-4">
+      <h2 className="text-xl font-bold">
+        Flashcards – {subject.name}
+      </h2>
+      <div
+        className="flex-1 flex items-center justify-center"
+      >
+        <button
+          onClick={() => setShowBack((prev) => !prev)}
+          className="w-full max-w-xl h-48 md:h-56 bg-slate-900 rounded-2xl border border-slate-600 flex items-center justify-center text-center px-6 text-lg md:text-xl font-semibold hover:border-emerald-400 transition-colors"
+        >
+          {showBack ? card.back : card.front}
+        </button>
+      </div>
+      <div className="flex items-center justify-between text-sm text-slate-300">
+        <button
+          onClick={prevCard}
+          className="px-3 py-2 rounded-lg bg-slate-700 hover:bg-slate-600"
+        >
+          Anterior
+        </button>
+        <span>
+          Cartão {index + 1} de {subject.flashcards.length}
+        </span>
+        <button
+          onClick={nextCard}
+          className="px-3 py-2 rounded-lg bg-slate-700 hover:bg-slate-600"
+        >
+          Próximo
+        </button>
+      </div>
+      <p className="text-xs text-slate-400 text-center">
+        Toque no cartão para ver o verso.
+      </p>
+    </div>
+  );
+}
+
+function QuizView({ subject }) {
+  const [index, setIndex] = useState(0);
+  const [selected, setSelected] = useState(null);
+  const [score, setScore] = useState(0);
+  const [finished, setFinished] = useState(false);
+  const question = subject.questions[index];
+
+  function handleAnswer() {
+    if (selected === null) return;
+    if (selected === question.correctIndex) {
+      setScore((prev) => prev + 1);
+    }
+    if (index === subject.questions.length - 1) {
+      setFinished(true);
+    } else {
+      setIndex((prev) => prev + 1);
+      setSelected(null);
+    }
+  }
+
+  function restart() {
+    setIndex(0);
+    setSelected(null);
+    setScore(0);
+    setFinished(false);
+  }
+
+  if (finished) {
+    return (
+      <div className="bg-slate-800 border border-slate-700 rounded-xl p-4 md:p-6">
+        <h2 className="text-xl font-bold mb-3">
+          Quiz – {subject.name}
+        </h2>
+        <p className="text-lg mb-2">
+          Você acertou{" "}
+          <span className="font-bold text-emerald-400">
+            {score}
+          </span>{" "}
+          de {subject.questions.length} questões.
+        </p>
+        <p className="text-sm text-slate-300 mb-4">
+          Continue praticando para reforçar ainda mais o conteúdo!
+        </p>
+        <button
+          onClick={restart}
+          className="px-4 py-2 rounded-lg bg-emerald-500 text-slate-900 font-semibold hover:bg-emerald-400"
+        >
+          Refazer quiz
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-slate-800 border border-slate-700 rounded-xl p-4 md:p-6 flex flex-col gap-4">
+      <h2 className="text-xl font-bold">
+        Quiz – {subject.name}
+      </h2>
+      <div className="text-sm text-slate-300">
+        Questão {index + 1} de {subject.questions.length}
+      </div>
+      <div className="bg-slate-900 rounded-lg p-4">
+        <p className="font-semibold mb-3">{question.question}</p>
+        <div className="flex flex-col gap-2">
+          {question.options.map((opt, i) => (
+            <label
+              key={i}
+              className={
+                "flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer border " +
+                (selected === i
+                  ? "bg-emerald-600 border-emerald-300 text-white"
+                  : "bg-slate-800 border-slate-600 hover:bg-slate-700")
+              }
+            >
+              <input
+                type="radio"
+                name="option"
+                className="hidden"
+                checked={selected === i}
+                onChange={() => setSelected(i)}
+              />
+              <span className="text-sm">{opt}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+      <button
+        onClick={handleAnswer}
+        className="self-end px-4 py-2 rounded-lg bg-emerald-500 text-slate-900 font-semibold hover:bg-emerald-400"
+      >
+        Confirmar resposta
+      </button>
+    </div>
+  );
+}
+
+// ---------------------- APP PRINCIPAL ----------------------
 
 function App() {
-  const [selectedSubject, setSelectedSubject] = useState(null);
-  const [mode, setMode] = useState(null);
-  const [currentCard, setCurrentCard] = useState(0);
-  const [isFlipped, setIsFlipped] = useState(false);
-  const [quizAnswers, setQuizAnswers] = useState([]);
-  const [showResults, setShowResults] = useState(false);
-  const [score, setScore] = useState(0);
+  const [selectedSubjectId, setSelectedSubjectId] = useState(null);
+  const [mode, setMode] = useState(null); // "summary" | "flashcards" | "quiz"
 
-  useEffect(() => {
-    const saved = localStorage.getItem('studyProgress');
-    if (saved) {
-      const data = JSON.parse(saved);
-      if (data.subject && studyData[data.subject]) {
-        setSelectedSubject(data.subject);
-        setMode(data.mode || null);
-      }
-    }
-  }, []);
+  const selectedSubject = subjects.find(
+    (s) => s.id === selectedSubjectId
+  );
 
-  const saveProgress = (subject, studyMode) => {
-    localStorage.setItem(
-      'studyProgress',
-      JSON.stringify({
-        subject,
-        mode: studyMode,
-        timestamp: new Date().toISOString()
-      })
-    );
-  };
-
-  const selectSubject = (subjectKey) => {
-    setSelectedSubject(subjectKey);
-    setMode(null);
-    setCurrentCard(0);
-    setIsFlipped(false);
-    setQuizAnswers([]);
-    setShowResults(false);
-    saveProgress(subjectKey, null);
-  };
-
-  const selectMode = (studyMode) => {
-    setMode(studyMode);
-    setCurrentCard(0);
-    setIsFlipped(false);
-    setQuizAnswers([]);
-    setShowResults(false);
-    saveProgress(selectedSubject, studyMode);
-  };
-
-  const goBack = () => {
-    if (mode) {
-      setMode(null);
-      setCurrentCard(0);
-      setIsFlipped(false);
-      setQuizAnswers([]);
-      setShowResults(false);
-    } else {
-      setSelectedSubject(null);
-    }
-  };
-
-  const nextCard = () => {
-    const subject = studyData[selectedSubject];
-    if (currentCard < subject.flashcards.length - 1) {
-      setCurrentCard((prev) => prev + 1);
-      setIsFlipped(false);
-    }
-  };
-
-  const prevCard = () => {
-    if (currentCard > 0) {
-      setCurrentCard((prev) => prev - 1);
-      setIsFlipped(false);
-    }
-  };
-
-  const handleQuizAnswer = (questionIndex, answerIndex) => {
-    const newAnswers = [...quizAnswers];
-    newAnswers[questionIndex] = answerIndex;
-    setQuizAnswers(newAnswers);
-  };
-
-  const submitQuiz = () => {
-    const subject = studyData[selectedSubject];
-    let correctCount = 0;
-    subject.quiz.forEach((q, i) => {
-      if (quizAnswers[i] === q.correct) correctCount++;
-    });
-    setScore(correctCount);
-    setShowResults(true);
-  };
-
-  const resetQuiz = () => {
-    setQuizAnswers([]);
-    setShowResults(false);
-    setScore(0);
-  };
-
-  // ------------------- TELAS -------------------
-
-  if (!selectedSubject) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-        <div className="max-w-6xl mx-auto">
-          <h1 className="text-4xl font-bold text-center mb-2 text-gray-800">
-            📚 Sistema de Estudo Completo
-          </h1>
-          <p className="text-center text-gray-600 mb-8">
-            Escolha uma matéria para começar a estudar
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {Object.keys(studyData).map((key) => {
-              const subject = studyData[key];
-              return (
-                <button
-                  key={key}
-                  onClick={() => selectSubject(key)}
-                  className={`bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 border-l-4 border-${subject.color}-500`}
-                >
-                  <div className="text-5xl mb-3">{subject.icon}</div>
-                  <h2 className="text-2xl font-bold text-gray-800">
-                    {subject.name}
-                  </h2>
-                  <p className="text-gray-600 mt-2">
-                    {subject.quiz.length} questões • {subject.flashcards.length} flashcards
-                  </p>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    );
+  function selectSubject(id) {
+    setSelectedSubjectId(id);
+    setMode("summary");
   }
 
-  const subject = studyData[selectedSubject];
+  return (
+    <div className="max-w-6xl mx-auto px-4 py-6 md:py-10">
+      <header className="mb-8 text-center">
+        <h1 className="text-3xl md:text-4xl font-extrabold text-emerald-400 mb-2">
+          Sistema de Estudo Completo
+        </h1>
+        <p className="text-sm md:text-base text-slate-300">
+          Escolha uma matéria, depois selecione o modo de estudo:
+          resumo, flashcards ou quiz.
+        </p>
+      </header>
 
-  if (!mode) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-        <div className="max-w-4xl mx-auto">
-          <button
-            onClick={goBack}
-            className="mb-6 px-4 py-2 bg-white rounded-lg shadow hover:shadow-md transition-all"
-          >
-            ← Voltar
-          </button>
-          <div className="bg-white rounded-xl shadow-xl p-8 mb-6">
-            <div className="text-6xl mb-4 text-center">{subject.icon}</div>
-            <h1 className="text-4xl font-bold text-center mb-4 text-gray-800">
-              {subject.name}
-            </h1>
-            <p className="text-center text-gray-600">
-              Selecione um modo de estudo
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <button
-              onClick={() => selectMode('summary')}
-              className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
-            >
-              <div className="text-4xl mb-3">📖</div>
-              <h3 className="text-xl font-bold mb-2">Resumo</h3>
-              <p className="text-gray-600">Leia o conteúdo completo</p>
-            </button>
-            <button
-              onClick={() => selectMode('flashcards')}
-              className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
-            >
-              <div className="text-4xl mb-3">🎴</div>
-              <h3 className="text-xl font-bold mb-2">Flashcards</h3>
-              <p className="text-gray-600">
-                {subject.flashcards.length} cartões de revisão
-              </p>
-            </button>
-            <button
-              onClick={() => selectMode('quiz')}
-              className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
-            >
-              <div className="text-4xl mb-3">✅</div>
-              <h3 class="text-xl font-bold mb-2">Quiz</h3>
-              <p className="text-gray-600">
-                {subject.quiz.length} questões de prática
-              </p>
-            </button>
-          </div>
+      {/* LISTA DE MATÉRIAS */}
+      <section className="mb-8">
+        <h2 className="text-lg font-semibold mb-3">
+          Matérias disponíveis
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {subjects.map((subject) => (
+            <SubjectButton
+              key={subject.id}
+              subject={subject}
+              isSelected={subject.id === selectedSubjectId}
+              onClick={() => selectSubject(subject.id)}
+            />
+          ))}
         </div>
-      </div>
-    );
-  }
+      </section>
 
-  if (mode === 'summary') {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-        <div className="max-w-4xl mx-auto">
-          <button
-            onClick={goBack}
-            className="mb-6 px-4 py-2 bg-white rounded-lg shadow hover:shadow-md transition-all"
-          >
-            ← Voltar
-          </button>
-          <div className="bg-white rounded-xl shadow-xl p-8">
-            <div className="flex items-center mb-6">
-              <div className="text-5xl mr-4">{subject.icon}</div>
-              <div>
-                <h1 className="text-3xl font-bold text-gray-800">
-                  {subject.name}
-                </h1>
-                <p className="text-gray-600">Resumo do conteúdo</p>
-              </div>
-            </div>
-            <div
-              className="prose max-w-none"
-              dangerouslySetInnerHTML={{ __html: subject.summary }}
+      {/* CONTEÚDO PRINCIPAL */}
+      {selectedSubject ? (
+        <section className="space-y-4">
+          {/* Botões de modo */}
+          <div className="flex flex-wrap gap-2 mb-2">
+            <ModeButton
+              label="Resumo"
+              mode="summary"
+              currentMode={mode}
+              onClick={() => setMode("summary")}
+            />
+            <ModeButton
+              label="Flashcards"
+              mode="flashcards"
+              currentMode={mode}
+              onClick={() => setMode("flashcards")}
+            />
+            <ModeButton
+              label="Quiz"
+              mode="quiz"
+              currentMode={mode}
+              onClick={() => setMode("quiz")}
             />
           </div>
-        </div>
-      </div>
-    );
-  }
 
-  if (mode === 'flashcards') {
-    const card = subject.flashcards[currentCard];
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-        <div className="max-w-2xl mx-auto">
-          <button
-            onClick={goBack}
-            className="mb-6 px-4 py-2 bg-white rounded-lg shadow hover:shadow-md transition-all"
-          >
-            ← Voltar
-          </button>
-          <div className="bg-white rounded-xl shadow-xl p-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">
-                {subject.icon} {subject.name} – Flashcards
-              </h2>
-              <span className="text-gray-600">
-                {currentCard + 1} / {subject.flashcards.length}
-              </span>
-            </div>
-            <div
-              onClick={() => setIsFlipped(!isFlipped)}
-              className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl p-8 min-h-64 flex items-center justify-center cursor-pointer transform transition-all hover:scale-105 shadow-lg"
-            >
-              <p className="text-white text-xl text-center">
-                {isFlipped ? card.back : card.front}
-              </p>
-            </div>
-            <p className="text-center text-gray-600 mt-4">
-              Clique no cartão para virar
-            </p>
-            <div className="flex justify-between mt-6">
-              <button
-                onClick={prevCard}
-                disabled={currentCard === 0}
-                className="px-6 py-3 bg-gray-200 rounded-lg font-semibold disabled:opacity-50 hover:bg-gray-300 transition-all"
-              >
-                ← Anterior
-              </button>
-              <button
-                onClick={nextCard}
-                disabled={currentCard === subject.flashcards.length - 1}
-                className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-semibold disabled:opacity-50 hover:bg-indigo-700 transition-all"
-              >
-                Próximo →
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+          {/* Renderização do modo atual */}
+          {mode === "summary" && <SummaryView subject={selectedSubject} />}
+          {mode === "flashcards" && (
+            <FlashcardsView subject={selectedSubject} />
+          )}
+          {mode === "quiz" && <QuizView subject={selectedSubject} />}
+        </section>
+      ) : (
+        <p className="text-slate-300 text-sm">
+          Selecione uma matéria acima para começar a estudar.
+        </p>
+      )}
+    </div>
+  );
+}
 
-  if (mode === 'quiz') {
-    const allAnswered = subject.quiz.every((_, i) => quizAnswers[i] !== undefined);
-
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-        <div className="max-w-4xl mx-auto">
-          <button
-            onClick={goBack}
-            className="mb-6 px-4 py-2 bg-white rounded-lg shadow hover:shadow-md transition-all"
-          >
-            ← Voltar
-          </button>
-          <div className="bg-white rounded-xl shadow-xl p-8">
-            <h2 className="text-3xl font-bold mb-6 text-gray-800">
-              {subject.icon} Quiz de {subject.name}
-            </h2>
-
-            {!showResults ? (
-              <>
-                {subject.quiz.map((q, qIndex) => (
-                  <div key={qIndex} className="mb-6 p-4 bg-gray-50 rounded-lg">
-                    <p className="font-semibold mb-3 text-gray-800">
-                      {qIndex + 1}. {q.question}
-                    </p>
-                    <div className="space-y-2">
-                      {q.options.map((option, oIndex) => (
-                        <label
-                          key={oIndex}
-                          className="flex items-center p-3 bg-white rounded-lg cursor-pointer hover:bg-indigo-50 transition-all"
-                        >
-                          <input
-                            type="radio"
-                            name={`question-${qIndex}`}
-                            checked={quizAnswers[qIndex] === oIndex}
-                            onChange={() => handleQuizAnswer(qIndex, oIndex)}
-                            className="mr-3"
-                          />
-                          <span>{option}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-                <button
-                  onClick={submitQuiz}
-                  disabled={!allAnswered}
-                  className="w-full py-3 bg-indigo-600 text-white rounded-lg font-bold text-lg disabled:opacity-50 hover:bg-indigo-700 transition-all"
-                >
-                  Enviar Respostas
-                </button>
-              </>
-            ) : (
-              <div className="text-center">
-                <div className="text-6xl mb-4">
-                  {score >= subject.quiz.length * 0.7 ? '🎉' : '📚'}
-                </div>
-                <h3 className="text-3xl font-bold mb-4">
-                  Você acertou {score} de {subject.quiz.length} questões!
-                </h3>
-                <p className="text-xl mb-6 text-gray-600">
-                  {score >= subject.quiz.length * 0.7
-                    ? 'Parabéns! Você foi muito bem!'
-                    : 'Continue praticando, você está no caminho certo!'}
-                </p>
-
-                <div className="space-y-4 mb-6 text-left">
-                  {subject.quiz.map((q, qIndex) => (
-                    <div
-                      key={qIndex}
-                      className={`p-4 rounded-lg ${
-                        quizAnswers[qIndex] === q.correct
-                          ? 'bg-green-100'
-                          : 'bg-red-100'
-                      }`}
-                    >
-                      <p className="font-semibold mb-2">{q.question}</p>
-                      <p className="text-sm">
-                        Sua resposta:{' '}
-                        {quizAnswers[qIndex] !== undefined
-                          ? q.options[quizAnswers[qIndex]]
-                          : 'não respondida'}
-                      </p>
-                      {quizAnswers[qIndex] !== q.correct && (
-                        <p className="text-sm text-green-700 mt-1
+// Monta o app no #root
+ReactDOM.render(<App />, document.getElementById("root"));
