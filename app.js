@@ -1,16 +1,5 @@
 const { useState, useEffect } = React;
 
-/*
-ESTRUTURA:
-- matematica: Números naturais, divisão, divisibilidade, primos, MDC/MMC
-- portugues: Língua Portuguesa – ortografia, classes de palavras, tipos de texto, concordância
-- historia: Conteúdo da apostila (expansão marítima, colonização, ciclos, 2º Reinado, etc.)
-- geografia: Sistema solar, movimentos da Terra, cartografia, zonas térmicas, fusos, população
-- ciencias: Células, níveis de organização, ecologia, sistemas, física e química básicas
-- ingles: Artigos, Simple Present, Past, Future, condicionais, numerais
-- artes: História da arte, antiguidade, Idade Média, Idade Moderna (Barroco, Realismo, Impressionismo), linguagens artísticas, folclore
-*/
-
 const studyData = {
   matematica: {
     name: 'Matemática',
@@ -19,12 +8,9 @@ const studyData = {
     summary: `
       <h3 class="text-xl font-bold mb-3">Números Naturais e Operações</h3>
       <p class="mb-2"><strong>Números Naturais (ℕ):</strong> 0, 1, 2, 3, 4, 5... usados para contar e ordenar.</p>
-      <p class="mb-4">Surgem nas situações do dia a dia: contar pessoas, objetos, dinheiro, etc.</p>
-
+      
       <h4 class="font-bold mb-2">Divisão</h4>
-      <p class="mb-2">Na divisão, vale sempre a relação:</p>
-      <p class="mb-4 text-center"><strong>Dividendo = Divisor × Quociente + Resto</strong></p>
-      <p class="mb-4">Exemplo: 17 ÷ 5 → 17 = 5 × 3 + 2, logo quociente = 3 e resto = 2.</p>
+      <p class="mb-4"><strong>Dividendo = Divisor × Quociente + Resto</strong></p>
 
       <h4 class="font-bold mb-2">Regras de Divisibilidade</h4>
       <ul class="list-disc ml-6 mb-4">
@@ -35,14 +21,12 @@ const studyData = {
       </ul>
 
       <h4 class="font-bold mb-2">Números Primos</h4>
-      <p class="mb-2">Maior que 1 e com apenas dois divisores: 1 e ele mesmo.</p>
-      <p class="mb-4">Exemplos: 2, 3, 5, 7, 11, 13, 17, 19...</p>
+      <p class="mb-4">Maior que 1 e com apenas dois divisores: 1 e ele mesmo. Exemplos: 2, 3, 5, 7, 11, 13, 17, 19...</p>
 
       <h4 class="font-bold mb-2">Fatoração, MDC e MMC</h4>
-      <p class="mb-2"><strong>Fatoração:</strong> escrever um número como produto de fatores primos: 12 = 2² × 3.</p>
-      <p class="mb-2"><strong>MDC:</strong> maior divisor comum de dois ou mais números.</p>
-      <p class="mb-2"><strong>MMC:</strong> menor múltiplo comum de dois ou mais números.</p>
-      <p class="mb-2">Muito usados em problemas com repetição de eventos (MMC) ou divisão em partes iguais (MDC).</p>
+      <p class="mb-2"><strong>Fatoração:</strong> escrever um número como produto de fatores primos.</p>
+      <p class="mb-2"><strong>MDC:</strong> maior divisor comum.</p>
+      <p class="mb-2"><strong>MMC:</strong> menor múltiplo comum.</p>
     `,
     flashcards: [
       { front: 'O que são números naturais?', back: 'São os números inteiros não negativos: 0, 1, 2, 3, 4, 5... usados para contagem e ordenação.' },
@@ -77,71 +61,59 @@ const studyData = {
     icon: '📚',
     color: 'green',
     summary: `
-      <h3 class="text-xl font-bold mb-3">Língua Portuguesa – Noções Gerais</h3>
-      <p class="mb-4">
-        A língua portuguesa é o instrumento de comunicação que usamos para expressar ideias, sentimentos
-        e informações. Estudar português envolve compreender <strong>ortografia</strong>, 
-        <strong>classes de palavras</strong>, <strong>tipos de texto</strong> e 
-        <strong>concordância</strong>, entre outros conteúdos.
-      </p>
-
-      <h4 class="font-bold mb-2">Ortografia</h4>
-      <p class="mb-2">Ortografia é o conjunto de regras para escrever corretamente as palavras.</p>
-      <ul class="list-disc ml-6 mb-4">
-        <li>Emprego correto de letras (s / z / x / ch / g / j etc.).</li>
-        <li>Uso de maiúsculas em nomes próprios, inícios de frases, siglas.</li>
-        <li>Uso de acentos gráficos (á, é, í, ó, ú, ã, õ, ê, ô, etc.).</li>
-      </ul>
-
+      <h3 class="text-xl font-bold mb-3">Língua Portuguesa – Classes de Palavras</h3>
+      
       <h4 class="font-bold mb-2">Classes de Palavras</h4>
       <ul class="list-disc ml-6 mb-4">
-        <li><strong>Substantivo:</strong> nomeia seres, lugares, sentimentos (casa, Brasil, amizade).</li>
-        <li><strong>Adjetivo:</strong> indica característica (bonito, alto, feliz).</li>
-        <li><strong>Verbo:</strong> indica ação, estado ou fenômeno (correr, ser, chover).</li>
-        <li><strong>Advérbio:</strong> modifica verbo, adjetivo ou outro advérbio (rapidamente, muito, aqui).</li>
-        <li><strong>Pronome:</strong> substitui ou acompanha o substantivo (eu, você, este).</li>
+        <li><strong>Substantivo:</strong> nomeia seres em geral (livro, cadeira, Gabriela, Florianópolis).</li>
+        <li><strong>Artigo:</strong> determina o substantivo de modo vago ou preciso (o, a, um, uma).</li>
+        <li><strong>Adjetivo:</strong> caracteriza o substantivo (camisa esverdeada, homem desleal).</li>
+        <li><strong>Numeral:</strong> indica quantidade ou posição (um, dois, primeiro, segundo).</li>
+        <li><strong>Pronome:</strong> representa ou acompanha substantivos (ele, esta, mim).</li>
+        <li><strong>Verbo:</strong> exprime processo situado no tempo (comeram, está, nevou).</li>
+        <li><strong>Advérbio:</strong> modifica o verbo indicando circunstância (cedo, bastante).</li>
+        <li><strong>Preposição:</strong> liga dois termos da oração (de, com, para).</li>
+        <li><strong>Conjunção:</strong> liga orações ou termos (e, mas, ou, porque).</li>
+        <li><strong>Interjeição:</strong> exprime sentimento e emoções (Ai! Puxa!).</li>
       </ul>
 
-      <h4 class="font-bold mb-2">Tipos de Texto</h4>
+      <h4 class="font-bold mb-2">Termos Essenciais da Oração</h4>
+      <p class="mb-2"><strong>Sujeito:</strong> termo que estabelece concordância com o verbo.</p>
+      <p class="mb-2"><strong>Predicado:</strong> aquilo que se declara a respeito do sujeito.</p>
+      <p class="mb-4">Exemplo: "Os homens (sujeito) pedem amor às mulheres (predicado)".</p>
+
+      <h4 class="font-bold mb-2">Tipos de Predicado</h4>
       <ul class="list-disc ml-6 mb-4">
-        <li><strong>Narrativo:</strong> conta uma história, com personagens, tempo, espaço e enredo.</li>
-        <li><strong>Descritivo:</strong> descreve características de pessoas, objetos, lugares.</li>
-        <li><strong>Injuntivo/Instrucional:</strong> orienta, dá instruções (receitas, manuais).</li>
-        <li><strong>Expositivo:</strong> explica conceitos e ideias de forma clara.</li>
+        <li><strong>Predicado Verbal:</strong> núcleo é um verbo significativo.</li>
+        <li><strong>Predicado Nominal:</strong> núcleo é um nome (predicativo do sujeito).</li>
+        <li><strong>Predicado Verbo-Nominal:</strong> apresenta dois núcleos (verbo e nome).</li>
       </ul>
-
-      <h4 class="font-bold mb-2">Concordância Verbal (Noções)</h4>
-      <p class="mb-2">
-        O verbo deve concordar em número e pessoa com o sujeito da oração.
-      </p>
-      <p class="mb-1 text-center"><strong>Eu estudo • Nós estudamos</strong></p>
-      <p class="mb-4 text-center"><strong>Ele gosta • Eles gostam</strong></p>
     `,
     flashcards: [
-      { front: 'O que é ortografia?', back: 'É o conjunto de regras que orientam a escrita correta das palavras.' },
-      { front: 'Exemplos de classes de palavras importantes', back: 'Substantivo, adjetivo, verbo, advérbio, pronome.' },
-      { front: 'Definição de substantivo', back: 'Palavra que nomeia seres, lugares, objetos, sentimentos, ideias.' },
-      { front: 'Definição de adjetivo', back: 'Palavra que indica característica do substantivo (bonito, alto, feliz).' },
-      { front: 'Definição de verbo', back: 'Palavra que indica ação, estado ou fenômeno da natureza.' },
-      { front: 'Texto narrativo', back: 'Tipo de texto que conta uma história, com personagens, enredo, tempo e espaço.' },
-      { front: 'Texto descritivo', back: 'Texto que apresenta características de pessoas, animais, objetos, lugares.' },
-      { front: 'Texto injuntivo', back: 'Texto que orienta ou dá instruções, como receitas e manuais.' },
-      { front: 'O que é concordância verbal?', back: 'É a relação de número e pessoa entre o verbo e o sujeito.' },
-      { front: 'Exemplo de concordância correta', back: '"Os alunos estudam bastante" (sujeito plural, verbo plural).' },
-      { front: 'Uso de maiúsculas', back: 'Início de frase, nomes próprios, siglas e títulos importantes.' },
-      { front: 'Por que estudar português é importante?', back: 'Para comunicar-se bem, interpretar textos e produzir boas redações.' }
+      { front: 'O que é substantivo?', back: 'Palavra que nomeia seres em geral: pessoas, lugares, objetos, sentimentos.' },
+      { front: 'Função do artigo', back: 'Determinar o substantivo de modo vago (um, uma) ou preciso (o, a).' },
+      { front: 'O que é adjetivo?', back: 'Palavra que caracteriza o substantivo, indicando qualidade ou característica.' },
+      { front: 'Função do pronome', back: 'Representar ou acompanhar substantivos (ele, esta, mim, ninguém).' },
+      { front: 'O que é verbo?', back: 'Palavra que exprime processo situado no tempo: ação, estado ou fenômeno.' },
+      { front: 'Função do advérbio', back: 'Modificar o verbo, indicando circunstância (tempo, modo, lugar, intensidade).' },
+      { front: 'O que é preposição?', back: 'Palavra que liga dois termos da oração, subordinando um ao outro.' },
+      { front: 'Função da conjunção', back: 'Ligar duas orações ou dois termos da oração.' },
+      { front: 'O que é sujeito?', back: 'Termo que estabelece concordância com o verbo na oração.' },
+      { front: 'O que é predicado?', back: 'Aquilo que se declara a respeito do sujeito.' },
+      { front: 'Predicado verbal', back: 'Aquele que tem como núcleo significativo um verbo.' },
+      { front: 'Predicado nominal', back: 'Aquele que tem como núcleo significativo um nome (predicativo do sujeito).' }
     ],
     quiz: [
       { question: 'Qual opção contém apenas substantivos?', options: ['casa, bonito, correr', 'Brasil, amizade, livro', 'feliz, aqui, ontem', 'eu, tu, ele'], correct: 1 },
       { question: 'Qual classe de palavra indica ação ou estado?', options: ['Substantivo', 'Adjetivo', 'Verbo', 'Advérbio'], correct: 2 },
-      { question: 'Que tipo de texto conta uma história?', options: ['Narrativo', 'Descritivo', 'Injuntivo', 'Expositivo'], correct: 0 },
-      { question: 'Qual frase está com concordância VERBAL correta?', options: ['Os meninos brinca na rua.', 'Os meninos brincam na rua.', 'O menino brincam na rua.', 'As menina brincam na rua.'], correct: 1 },
       { question: 'Qual é um exemplo de adjetivo?', options: ['mesa', 'Brasil', 'alegre', 'correr'], correct: 2 },
-      { question: 'Em qual opção o verbo está no singular?', options: ['Os alunos estudam.', 'As crianças brincam.', 'O aluno estuda.', 'Eles correm.'], correct: 2 },
-      { question: 'Qual frase usa corretamente a letra maiúscula?', options: ['o brasil é um país.', 'Brasil é um país.', 'brasil É Um País.', 'BRASIL é Um país.'], correct: 1 },
-      { question: 'Qual alternativa NÃO é um tipo de texto?', options: ['Narrativo', 'Descritivo', 'Olfativo', 'Expositivo'], correct: 2 },
-      { question: 'Pronome que representa quem fala:', options: ['ele', 'nós', 'eles', 'vocês'], correct: 1 },
-      { question: 'Na frase "Ela estuda muito", o sujeito é:', options: ['estuda', 'muito', 'ela', 'estuda muito'], correct: 2 }
+      { question: 'Qual é a função do pronome?', options: ['Nomear seres', 'Representar ou acompanhar substantivos', 'Indicar ação', 'Ligar termos'], correct: 1 },
+      { question: 'Qual palavra é um advérbio?', options: ['casa', 'bonito', 'rapidamente', 'correr'], correct: 2 },
+      { question: 'Qual é uma preposição?', options: ['casa', 'de', 'bonito', 'correr'], correct: 1 },
+      { question: 'Qual é uma conjunção?', options: ['casa', 'bonito', 'e', 'correr'], correct: 2 },
+      { question: 'Na frase "O aluno estuda", o sujeito é:', options: ['estuda', 'O', 'O aluno', 'aluno'], correct: 2 },
+      { question: 'Na frase "O dia amanheceu ensolarado", o predicado é:', options: ['Verbal', 'Nominal', 'Verbo-nominal', 'Inexistente'], correct: 2 },
+      { question: 'Qual frase tem predicado nominal?', options: ['O menino correu.', 'A menina é inteligente.', 'Eles comeram bolo.', 'Nós viajamos ontem.'], correct: 1 }
     ]
   },
 
@@ -151,7 +123,7 @@ const studyData = {
     color: 'yellow',
     summary: `
       <h3 class="text-xl font-bold mb-3">Expansão Marítima e Colonização</h3>
-      <p class="mb-2">
+      <p class="mb-4">
         A partir dos séculos XV e XVI, reinos europeus como Portugal e Espanha 
         iniciaram grandes viagens marítimas em busca de novas rotas comerciais,
         metais preciosos e expansão da fé cristã.
@@ -166,15 +138,10 @@ const studyData = {
       </ul>
 
       <h4 class="font-bold mb-2">Colonização da América</h4>
-      <p class="mb-2">
+      <p class="mb-4">
         Os europeus invadiram territórios americanos, dominaram povos nativos,
         escravizaram populações indígenas e africanas e implantaram o 
         <strong>Sistema Colonial</strong>.
-      </p>
-      <p class="mb-4">
-        Na América portuguesa (Brasil), destacam-se o pau-brasil, o 
-        <strong>ciclo do açúcar</strong> e posteriormente o 
-        <strong>ciclo do ouro</strong>.
       </p>
 
       <h4 class="font-bold mb-2">Ciclos Econômicos no Brasil Colônia</h4>
@@ -190,7 +157,7 @@ const studyData = {
         O Segundo Reinado (1840–1889), com D. Pedro II, teve estabilidade política, 
         crescimento do café e modernização.
       </p>
-      <p class="mb-2">
+      <p class="mb-4">
         A escravidão foi abolida em 1888, com a Lei Áurea, após leis graduais como 
         a do Ventre Livre (1871) e a dos Sexagenários (1885).
       </p>
@@ -238,24 +205,18 @@ const studyData = {
       <h3 class="text-xl font-bold mb-3">Geografia Física e Humana</h3>
 
       <h4 class="font-bold mb-2">Sistema Solar</h4>
-      <p class="mb-2">
+      <p class="mb-4">
         O Sistema Solar é formado pelo Sol e 8 planetas: Mercúrio, Vênus, Terra, Marte, 
         Júpiter, Saturno, Urano e Netuno.
-      </p>
-      <p class="mb-4">
-        A Terra é o único planeta conhecido que possui condições para a vida como a conhecemos.
       </p>
 
       <h4 class="font-bold mb-2">Movimentos da Terra</h4>
       <ul class="list-disc ml-6 mb-4">
-        <li><strong>Rotação:</strong> movimento em torno do próprio eixo, com duração aproximada de 24 horas. Causa os dias e as noites.</li>
-        <li><strong>Translação:</strong> movimento ao redor do Sol, com duração aproximada de 365 dias. Responsável pelas estações do ano.</li>
+        <li><strong>Rotação:</strong> movimento em torno do próprio eixo, duração aproximada de 24 horas. Causa os dias e as noites.</li>
+        <li><strong>Translação:</strong> movimento ao redor do Sol, duração aproximada de 365 dias. Responsável pelas estações do ano.</li>
       </ul>
 
       <h4 class="font-bold mb-2">Cartografia e Coordenadas</h4>
-      <p class="mb-2">
-        A cartografia estuda a representação da superfície terrestre por meio de mapas.
-      </p>
       <p class="mb-2">
         <strong>Latitude:</strong> distância em graus em relação à Linha do Equador (0°).<br>
         <strong>Longitude:</strong> distância em graus em relação ao Meridiano de Greenwich (0°).
@@ -273,19 +234,7 @@ const studyData = {
 
       <h4 class="font-bold mb-2">Fusos Horários</h4>
       <p class="mb-4">
-        A Terra é dividida em 24 fusos horários de 15° cada. O Brasil possui 4 fusos horários
-        oficialmente considerados (embora alguns sejam pouco usados).
-      </p>
-
-      <h4 class="font-bold mb-2">População</h4>
-      <p class="mb-2">
-        A <strong>demografia</strong> estuda o tamanho, a distribuição e a dinâmica das populações.
-      </p>
-      <p class="mb-2">
-        <strong>Densidade demográfica:</strong> população total dividida pela área do território.
-      </p>
-      <p class="mb-2">
-        <strong>Migração:</strong> deslocamento de pessoas de um lugar para outro, dentro de um país ou entre países.
+        A Terra é dividida em 24 fusos horários de 15° cada. O Brasil possui 4 fusos horários oficiais.
       </p>
     `,
     flashcards: [
@@ -340,7 +289,6 @@ const studyData = {
       <ul class="list-disc ml-6 mb-4">
         <li><strong>Cadeia alimentar:</strong> Produtor → Consumidor → Decompositor.</li>
         <li><strong>Ecossistema:</strong> conjunto de seres vivos (fatores bióticos) e ambiente (fatores abióticos).</li>
-        <li><strong>Biomas brasileiros:</strong> Amazônia, Cerrado, Caatinga, Mata Atlântica, Pampa, Pantanal.</li>
       </ul>
 
       <h4 class="font-bold mb-2">Sistemas do Corpo Humano</h4>
@@ -351,17 +299,8 @@ const studyData = {
         <li><strong>Nervoso:</strong> coordena e controla o funcionamento do corpo.</li>
       </ul>
 
-      <h4 class="font-bold mb-2">Noções de Física</h4>
-      <p class="mb-2"><strong>Força:</strong> causa mudanças no movimento ou na forma dos corpos (F = m × a).</p>
-      <p class="mb-2"><strong>Energia:</strong> capacidade de realizar trabalho.</p>
-      <p class="mb-4"><strong>Ondas:</strong> perturbações que se propagam, como som e luz.</p>
-
-      <h4 class="font-bold mb-2">Noções de Química</h4>
-      <p class="mb-2"><strong>Átomo:</strong> menor partícula da matéria com propriedades químicas.</p>
-      <p class="mb-2">
-        Substâncias podem ser <strong>puras</strong> (um único tipo de substância) ou 
-        <strong>misturas</strong> (dois ou mais tipos).
-      </p>
+      <h4 class="font-bold mb-2">Órgãos dos Sentidos</h4>
+      <p class="mb-2">Visão, audição, olfato, paladar e tato nos permitem perceber o ambiente.</p>
     `,
     flashcards: [
       { front: 'O que é célula?', back: 'Menor unidade estrutural e funcional dos seres vivos.' },
@@ -369,25 +308,25 @@ const studyData = {
       { front: 'Níveis de organização do corpo', back: 'Célula → Tecido → Órgão → Sistema → Organismo.' },
       { front: 'O que é ecologia?', back: 'Ramo da biologia que estuda as relações entre os seres vivos e o ambiente.' },
       { front: 'Definição de cadeia alimentar', back: 'Sequência de seres vivos em que um serve de alimento ao outro.' },
-      { front: 'Biomas brasileiros principais', back: 'Amazônia, Cerrado, Caatinga, Mata Atlântica, Pampa, Pantanal.' },
       { front: 'Função do sistema respiratório', back: 'Realizar as trocas gasosas (O₂ entra, CO₂ sai).' },
       { front: 'Função do sistema circulatório', back: 'Transportar sangue, nutrientes e gases pelo organismo.' },
-      { front: 'Fórmula da força na física', back: 'F = m × a (força = massa × aceleração).' },
-      { front: 'O que é energia?', back: 'Capacidade de realizar trabalho ou produzir mudanças.' },
-      { front: 'O que é átomo?', back: 'Menor partícula da matéria que conserva propriedades químicas.' },
-      { front: 'Substância pura x mistura', back: 'Pura: um único tipo de substância; mistura: combinação de duas ou mais.' }
+      { front: 'Quais são os cinco sentidos?', back: 'Visão, audição, olfato, paladar e tato.' },
+      { front: 'O que é ecossistema?', back: 'Conjunto de seres vivos e ambiente que se relacionam.' },
+      { front: 'O que são fatores bióticos?', back: 'Seres vivos de um ecossistema.' },
+      { front: 'O que são fatores abióticos?', back: 'Elementos não vivos: solo, água, atmosfera.' },
+      { front: 'Reino Animal e Vegetal', back: 'Animais são heterótrofos; plantas são autótrofas (fotossíntese).' }
     ],
     quiz: [
       { question: 'A menor unidade dos seres vivos é:', options: ['Tecido', 'Célula', 'Órgão', 'Sistema'], correct: 1 },
       { question: 'Células com núcleo definido são chamadas de:', options: ['Procariontes', 'Eucariontes', 'Neurônios', 'Hemácias'], correct: 1 },
       { question: 'Sequência correta de organização:', options: ['Órgão → Célula → Tecido', 'Célula → Órgão → Tecido', 'Célula → Tecido → Órgão', 'Sistema → Órgão → Tecido'], correct: 2 },
       { question: 'Na cadeia alimentar, produtores são:', options: ['Animais carnívoros', 'Plantas e algas', 'Decompositores', 'Predadores'], correct: 1 },
-      { question: 'Bioma com maior floresta tropical do mundo:', options: ['Cerrado', 'Caatinga', 'Amazônia', 'Pampa'], correct: 2 },
       { question: 'Sistema responsável pelas trocas gasosas:', options: ['Digestório', 'Respiratório', 'Circulatório', 'Nervoso'], correct: 1 },
-      { question: 'Na fórmula F = m × a, F significa:', options: ['Força', 'Fricção', 'Frequência', 'Fio'], correct: 0 },
-      { question: 'Energia é:', options: ['Massa de um corpo', 'Gravidade da Terra', 'Capacidade de realizar trabalho', 'Temperatura do ar'], correct: 2 },
-      { question: 'Átomo é:', options: ['Conjunto de células', 'Menor partícula da matéria', 'Tipo de energia', 'Mistura de gases'], correct: 1 },
-      { question: 'Mistura é:', options: ['Substância só com um componente', 'União de duas ou mais substâncias', 'Apenas água', 'Apenas gás'], correct: 1 }
+      { question: 'Quantos são os sentidos humanos?', options: ['3', '4', '5', '6'], correct: 2 },
+      { question: 'O que é ecossistema?', options: ['Apenas plantas', 'Apenas animais', 'Seres vivos e ambiente', 'Apenas água'], correct: 2 },
+      { question: 'Fatores bióticos são:', options: ['Água e solo', 'Seres vivos', 'Ar e luz', 'Rochas'], correct: 1 },
+      { question: 'Plantas realizam:', options: ['Respiração apenas', 'Fotossíntese', 'Digestão', 'Circulação'], correct: 1 },
+      { question: 'Animais são:', options: ['Autótrofos', 'Heterótrofos', 'Produtores', 'Decompositores'], correct: 1 }
     ]
   },
 
@@ -407,7 +346,7 @@ const studyData = {
       <h4 class="font-bold mb-2">Simple Present</h4>
       <p class="mb-2">Usado para hábitos, rotinas e verdades gerais.</p>
       <p class="mb-2"><strong>Afirmação:</strong> I work, You play, He works (3rd person + s).</p>
-      <p class="mb-2"><strong>Negativa:</strong> I don’t work, He doesn’t work.</p>
+      <p class="mb-2"><strong>Negativa:</strong> I don't work, He doesn't work.</p>
       <p class="mb-4"><strong>Interrogativa:</strong> Do you work? Does he work?</p>
 
       <h4 class="font-bold mb-2">Simple Past</h4>
@@ -422,18 +361,12 @@ const studyData = {
       <h4 class="font-bold mb-2">Conditional Sentences</h4>
       <p class="mb-2"><strong>Type 1:</strong> If + present, will + verb. (Situação real)</p>
       <p class="mb-2">Ex.: If you study, you will pass.</p>
-      <p class="mb-2"><strong>Type 2:</strong> If + past, would + verb. (Situação hipotética)</p>
-      <p class="mb-2">Ex.: If I had money, I would travel.</p>
-
-      <h4 class="font-bold mb-2">Numerais (Numbers)</h4>
-      <p class="mb-2">De 1 a 20: one, two, three, four, five, ... twenty.</p>
-      <p class="mb-2">A partir de 21: twenty-one, twenty-two, etc.</p>
     `,
     flashcards: [
       { front: 'Uso de A e AN', back: 'A antes de som de consoante (a book), AN antes de som de vogal (an apple).' },
       { front: 'Uso de THE', back: 'Artigo definido para algo específico (the book = o livro).' },
       { front: 'Simple Present – 3ª pessoa', back: 'Adiciona -s ao verbo: He works, She plays, It rains.' },
-      { front: 'Negativa no Simple Present', back: 'I/you/we/they + don’t + verb; he/she/it + doesn’t + verb.' },
+      { front: 'Negativa no Simple Present', back: 'I/you/we/they + don\'t + verb; he/she/it + doesn\'t + verb.' },
       { front: 'Interrogativa no Simple Present', back: 'Do + I/you/we/they + verb? Does + he/she/it + verb?' },
       { front: 'Formação do Simple Past regular', back: 'Verbo + -ed: work → worked, play → played.' },
       { front: 'Verbos irregulares – exemplos', back: 'go → went, see → saw, have → had, do → did.' },
@@ -450,7 +383,7 @@ const studyData = {
       { question: 'They ___ study tomorrow.', options: ['will', 'would', 'are', 'did'], correct: 0 },
       { question: 'If you study, you ___ pass.', options: ['will', 'would', 'can\'t', 'did'], correct: 0 },
       { question: 'The past of "go" is:', options: ['goed', 'went', 'gone', 'goes'], correct: 1 },
-      { question: 'Negative: He ___ like coffee.', options: ['don’t', 'doesn’t', 'didn’t', 'isn’t'], correct: 1 },
+      { question: 'Negative: He ___ like coffee.', options: ['don\'t', 'doesn\'t', 'didn\'t', 'isn\'t'], correct: 1 },
       { question: 'Question: ___ you speak English?', options: ['Do', 'Does', 'Did', 'Are'], correct: 0 },
       { question: 'Future plan: I am ___ to travel.', options: ['go', 'goes', 'going', 'went'], correct: 2 },
       { question: 'Type 2: If I had money, I ___ travel.', options: ['will', 'would', 'going to', 'can'], correct: 1 }
@@ -465,24 +398,19 @@ const studyData = {
       <h3 class="text-xl font-bold mb-3">História da Arte e Linguagens Artísticas</h3>
 
       <h4 class="font-bold mb-2">História da Arte</h4>
-      <p class="mb-2">
+      <p class="mb-4">
         A História da Arte estuda a evolução das expressões artísticas ao longo do tempo,
-        como pintura, escultura e arquitetura. Observa estilos, técnicas, temas e contextos
-        históricos em que as obras foram produzidas.
+        como pintura, escultura e arquitetura.
       </p>
 
       <h4 class="font-bold mb-2">Arte na Antiguidade</h4>
       <ul class="list-disc ml-6 mb-4">
         <li><strong>Egito:</strong> arte ligada à religião e ao culto aos faraós; uso da simetria, frontalidade e monumentos como pirâmides.</li>
-        <li><strong>Mesopotâmia:</strong> desenvolvimento de relevo, escultura e arquitetura com forte caráter decorativo.</li>
         <li><strong>Grécia:</strong> busca do ideal de beleza, proporção e equilíbrio. Templos (como o Partenon) e esculturas realistas.</li>
         <li><strong>Roma:</strong> herda muito da arte grega; desenvolve arquitetura monumental (arcos, aquedutos, anfiteatros).</li>
       </ul>
 
       <h4 class="font-bold mb-2">Arte na Idade Média</h4>
-      <p class="mb-2">
-        Fortemente influenciada pela Igreja Católica, com temas religiosos predominantes.
-      </p>
       <ul class="list-disc ml-6 mb-4">
         <li><strong>Estilo Românico:</strong> construções robustas, paredes grossas, poucas janelas e arcos de volta perfeita.</li>
         <li><strong>Estilo Gótico:</strong> construções altas, com vitrais, arcos ogivais e sensação de verticalidade.</li>
@@ -490,28 +418,16 @@ const studyData = {
 
       <h4 class="font-bold mb-2">Arte na Idade Moderna</h4>
       <ul class="list-disc ml-6 mb-4">
-        <li><strong>Barroco:</strong> arte dramática, com contrastes de luz e sombra, emoção e movimento. No Brasil, ligado à religiosidade e à riqueza do ouro.</li>
+        <li><strong>Barroco:</strong> arte dramática, com contrastes de luz e sombra, emoção e movimento.</li>
         <li><strong>Realismo:</strong> representação da realidade social, com temas como pobreza, injustiça e crítica social.</li>
-        <li><strong>Impressionismo:</strong> surgido na França no século XIX, valoriza a luz, a cor e as impressões momentâneas da natureza. Pinturas ao ar livre, pinceladas soltas.</li>
+        <li><strong>Impressionismo:</strong> surgido na França no século XIX, valoriza a luz, a cor e as impressões momentâneas da natureza.</li>
       </ul>
 
-      <h4 class="font-bold mb-2">Linguagens Artísticas</h4>
-      <p class="mb-2">
-        As linguagens artísticas incluem pintura, escultura, arquitetura, música, dança, teatro, literatura e cinema.
-      </p>
-      <p class="mb-4">
-        Cada linguagem possui seus próprios códigos, materiais e formas de expressão, mas todas
-        comunicam ideias, sentimentos e visões de mundo.
-      </p>
-
       <h4 class="font-bold mb-2">Folclore</h4>
-      <p class="mb-2">
+      <p class="mb-4">
         Folclore é o conjunto de tradições, lendas, danças, festas, músicas, provérbios e costumes 
-        de um povo. É transmitido de geração em geração e representa a identidade cultural de uma comunidade.
-      </p>
-      <p class="mb-2">
-        No Brasil, o folclore é riquíssimo: festas juninas, boi-bumbá, frevo, maracatu, lendas como Saci,
-        Curupira, Iara, entre muitas outras.
+        de um povo. No Brasil: festas juninas, boi-bumbá, frevo, maracatu, lendas como Saci,
+        Curupira, Iara.
       </p>
     `,
     flashcards: [
@@ -726,7 +642,7 @@ function App() {
               className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
             >
               <div className="text-4xl mb-3">✅</div>
-              <h3 className="text-xl font-bold mb-2">Quiz</h3>
+              <h3 class="text-xl font-bold mb-2">Quiz</h3>
               <p className="text-gray-600">
                 {subject.quiz.length} questões de prática
               </p>
@@ -903,30 +819,4 @@ function App() {
                           : 'não respondida'}
                       </p>
                       {quizAnswers[qIndex] !== q.correct && (
-                        <p className="text-sm text-green-700 mt-1">
-                          Correta: {q.options[q.correct]}
-                        </p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                <button
-                  onClick={resetQuiz}
-                  className="px-8 py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition-all"
-                >
-                  Tentar novamente
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return null;
-}
-
-// Renderização
-ReactDOM.render(<App />, document.getElementById('root'));
+                        <p className="text-sm text-green-700 mt-1
